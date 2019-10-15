@@ -1,9 +1,10 @@
-import React, { Component } from "react";
+import React from "react";
+import { Button } from "@material-ui/core";
 
-class Filter extends Component {
-  render() {
-    return <div>Filter</div>;
-  }
+export default function Filter(props) {
+  return (
+    <Button variant="contained" color="primary" size="medium">
+      Filter
+    </Button>
+  );
 }
-
-export default Filter;

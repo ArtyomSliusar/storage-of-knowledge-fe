@@ -1,106 +1,67 @@
-import Paper from "@material-ui/core/Paper";
-import { Button, FormControl, Input, InputLabel } from "@material-ui/core";
 import React from "react";
-import PropTypes from "prop-types";
-import { makeStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
+import TabPanel from "./TabPanel";
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+import Login from "./Login";
+import Register from "./Register";
+import Modal from "./Modal";
+import history from "../history";
+import AdapterLink from "./AdapterLink";
+import { popUrl } from "../utils/otherUtils";
 
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired
-};
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1
+const styles = theme => ({
+  textField: {
+    width: "100%"
   },
-  form: {
-    display: "inline-block"
+  actionButton: {
+    marginRight: theme.spacing(2),
+    marginBottom: theme.spacing(1)
   }
-}));
+});
 
-function LoginRegister() {
-  const classes = useStyles();
-  const [value, setValue] = React.useState(0);
-
-  function handleChange(event, newValue) {
-    setValue(newValue);
+class LoginRegister extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tab: props.tab !== undefined ? props.tab : 0
+    };
   }
 
-  return (
-    <Paper className={classes.root}>
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        indicatorColor="primary"
-        textColor="primary"
-        centered
-      >
-        <Tab label="Log in" />
-        <Tab label="Register" />
-      </Tabs>
+  handleModalClose = () => {
+    history.push(popUrl(history.location.pathname));
+  };
 
-      <TabPanel value={value} index={0}>
-        <form className={classes.root}>
-          <FormControl margin="normal" fullWidth>
-            <InputLabel htmlFor="username">Username</InputLabel>
-            <Input id="username" type="text" />
-          </FormControl>
+  handleTabChange = (event, newTab) => {
+    this.setState({ tab: newTab });
+  };
 
-          <FormControl margin="normal" fullWidth>
-            <InputLabel htmlFor="password">Password</InputLabel>
-            <Input id="password" type="password" />
-          </FormControl>
+  render() {
+    const { classes } = this.props;
+    return (
+      <Modal open={true} onClose={this.handleModalClose}>
+        <Tabs
+          value={this.state.tab}
+          onChange={this.handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+          centered
+        >
+          <Tab label="Log in" to="/login" component={AdapterLink} />
+          <Tab label="Register" to="/register" component={AdapterLink} />
+        </Tabs>
 
-          <Button variant="contained" color="primary" size="medium">
-            Log in
-          </Button>
-        </form>
-      </TabPanel>
+        <TabPanel value={this.state.tab} index={0}>
+          <Login classes={classes} onClose={this.handleModalClose} />
+        </TabPanel>
 
-      <TabPanel value={value} index={1}>
-        <form className={classes.root}>
-          <FormControl margin="normal" fullWidth>
-            <InputLabel htmlFor="username">Username</InputLabel>
-            <Input id="username" type="text" />
-          </FormControl>
-
-          <FormControl margin="normal" fullWidth>
-            <InputLabel htmlFor="email">Email</InputLabel>
-            <Input id="email" type="email" />
-          </FormControl>
-
-          <FormControl margin="normal" fullWidth>
-            <InputLabel htmlFor="password">Password</InputLabel>
-            <Input id="password" type="password" />
-          </FormControl>
-
-          <Button variant="contained" color="primary" size="medium">
-            Sign up
-          </Button>
-        </form>
-      </TabPanel>
-    </Paper>
-  );
+        <TabPanel value={this.state.tab} index={1}>
+          <Register classes={classes} onClose={this.handleModalClose} />
+        </TabPanel>
+      </Modal>
+    );
+  }
 }
 
-export default LoginRegister;
+export default withStyles(styles)(LoginRegister);
