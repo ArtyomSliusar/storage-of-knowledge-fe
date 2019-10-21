@@ -1,6 +1,4 @@
-const popUrl = url => {
-  return url.substring(0, url.lastIndexOf("/")) || "/";
-};
+import { NOTE } from "../constants";
 
 function setLocalStorageState(state) {
   try {
@@ -43,7 +41,13 @@ function getInitialState() {
     auth: {
       tokens: {},
       user: {}
-    }
+    },
+    filters: {
+      subjects: [],
+      type: NOTE
+    },
+    notes: [],
+    links: []
   };
   const localStorageState = getLocalStorageState();
   if (localStorageState.auth && localStorageState.auth.tokens) {
@@ -55,4 +59,4 @@ function getInitialState() {
   return initialState;
 }
 
-export { popUrl, setLocalStorageState, getInitialState, getTokenPayload };
+export { setLocalStorageState, getInitialState, getTokenPayload };

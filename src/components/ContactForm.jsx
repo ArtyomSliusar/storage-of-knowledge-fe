@@ -1,26 +1,15 @@
 import React from "react";
-import { Button, withStyles } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import { Field, reduxForm, SubmissionError } from "redux-form";
 import { renderTextField } from "../utils/formUtils";
 import { contact } from "../utils/apiUtils";
-import Modal from "./Modal";
-import history from "../history";
-import { popUrl } from "../utils/otherUtils";
-
-const styles = theme => ({
-  textField: {
-    width: "100%"
-  },
-  actionButton: {
-    marginRight: theme.spacing(2),
-    marginBottom: theme.spacing(1)
-  }
-});
 
 class ContactForm extends React.Component {
   onSubmit = ({ name, email, message }) => {
     return contact(name, email, message)
-      .then(history.goBack())
+      .then(() => {
+        this.props.onFormSuccess();
+      })
       .catch(error => {
         if (error.response) {
           const status = error.response.status;
@@ -115,25 +104,7 @@ const validate = values => {
   return errors;
 };
 
-const ContactFormWrapped = reduxForm({
+export default reduxForm({
   form: "contactForm",
   validate
 })(ContactForm);
-
-class Contact extends React.Component {
-  handleModalClose = () => {
-    history.push(popUrl(history.location.pathname));
-  };
-
-  render() {
-    const { classes } = this.props;
-
-    return (
-      <Modal open={true} onClose={this.handleModalClose} title="Contact Form">
-        <ContactFormWrapped classes={classes} onClose={this.handleModalClose} />
-      </Modal>
-    );
-  }
-}
-
-export default withStyles(styles)(Contact);

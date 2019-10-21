@@ -2,7 +2,7 @@ import * as _ from "lodash";
 
 import backend from "../apis/backend";
 import { getTokenPayload } from "../utils/otherUtils";
-import { LOGOUT, REFRESH_TOKENS } from "../actions/types";
+import { LOGOUT, REFRESH_TOKENS } from "../constants";
 import history from "../history";
 
 async function refreshTokens(refreshToken) {

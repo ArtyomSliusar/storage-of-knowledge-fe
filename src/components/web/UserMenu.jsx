@@ -6,8 +6,9 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Link } from "react-router-dom";
 import { useTheme } from "@material-ui/core";
+import { connect } from "react-redux";
 
-export default function UserMenu(props) {
+function UserMenu(props) {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -28,7 +29,7 @@ export default function UserMenu(props) {
         onClick={handleClick}
       >
         <AccountCircle style={{ marginRight: theme.spacing(1) }} />
-        {props.username}
+        {props.username || "user"}
       </Button>
       <Menu
         id="simple-menu"
@@ -51,6 +52,13 @@ export default function UserMenu(props) {
 
 UserMenu.propTypes = {
   items: PropTypes.object.isRequired,
-  username: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired
 };
+
+const mapStateToProps = state => {
+  return {
+    username: state.auth.user.username
+  };
+};
+
+export default connect(mapStateToProps)(UserMenu);

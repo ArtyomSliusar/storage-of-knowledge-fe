@@ -1,8 +1,9 @@
 import backend from "../apis/backend";
 
 /**
- * Request with no authentication and no storage update.
+ * Requests with no authentication and no storage update.
  */
+
 async function contact(name, email, message) {
   await backend.post(
     "/contact/",
@@ -19,4 +20,12 @@ async function contact(name, email, message) {
   );
 }
 
-export { contact };
+async function getSubjects() {
+  return await backend.get("/subjects/", {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+}
+
+export { contact, getSubjects };

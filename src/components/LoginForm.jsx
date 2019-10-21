@@ -1,28 +1,33 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Button } from "@material-ui/core";
 import { Field, reduxForm, SubmissionError } from "redux-form";
+import { login } from "../actions";
 import { renderTextField } from "../utils/formUtils";
-import { connect } from "react-redux";
-import { register } from "../actions";
 
-class Register extends React.Component {
-  onSubmit = ({ username, email, password }) => {
-    return this.props.register(username, email, password).catch(error => {
-      if (error.response) {
-        const status = error.response.status;
-        if (status >= 400 && status < 500) {
-          throw new SubmissionError({
-            ...error.response.data,
-            _error: error.response.data.detail
-          });
-        } else {
-          throw new SubmissionError({
-            _error: error.response.statusText
-          });
+class LoginForm extends React.Component {
+  onSubmit = ({ username, password }) => {
+    return this.props
+      .login(username, password)
+      .then(() => {
+        this.props.onFormSuccess();
+      })
+      .catch(error => {
+        if (error.response) {
+          const status = error.response.status;
+          if (status >= 400 && status < 500) {
+            throw new SubmissionError({
+              ...error.response.data,
+              _error: error.response.data.detail
+            });
+          } else {
+            throw new SubmissionError({
+              _error: error.response.statusText
+            });
+          }
         }
-      }
-      alert(error);
-    });
+        alert(error);
+      });
   };
 
   render() {
@@ -34,16 +39,6 @@ class Register extends React.Component {
             name="username"
             component={renderTextField}
             label="Username"
-            className={classes.textField}
-            margin="normal"
-          />
-        </div>
-
-        <div>
-          <Field
-            name="email"
-            component={renderTextField}
-            label="Email"
             className={classes.textField}
             margin="normal"
           />
@@ -69,7 +64,7 @@ class Register extends React.Component {
           size="medium"
           className={classes.actionButton}
         >
-          Sign up
+          Log in
         </Button>
         <Button
           variant="contained"
@@ -86,26 +81,20 @@ class Register extends React.Component {
 
 const validate = values => {
   const errors = {};
-  ["username", "email", "password"].forEach(field => {
+  ["username", "password"].forEach(field => {
     if (!values[field]) {
       errors[field] = "Required";
     }
   });
-  if (
-    values.email &&
-    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
-  ) {
-    errors.email = "Invalid email address";
-  }
   return errors;
 };
 
 const formWrapped = reduxForm({
-  form: "registerForm",
+  form: "loginForm",
   validate
-})(Register);
+})(LoginForm);
 
 export default connect(
   null,
-  { register }
+  { login }
 )(formWrapped);

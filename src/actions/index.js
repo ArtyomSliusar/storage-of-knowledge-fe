@@ -1,6 +1,17 @@
 import backend from "../apis/backend";
-import { GET_USER, LOGIN, LOGOUT, REGISTER } from "./types";
+import {
+  APPLY_FILTERS,
+  GET_LINKS,
+  GET_MORE_LINKS,
+  GET_MORE_NOTES,
+  GET_NOTES,
+  GET_USER,
+  LOGIN,
+  LOGOUT,
+  REGISTER
+} from "../constants";
 import history from "../history";
+import axios from "axios";
 
 export const login = (username, password) => async dispatch => {
   const response = await backend.post(
@@ -20,8 +31,6 @@ export const login = (username, password) => async dispatch => {
     type: LOGIN,
     payload: { data: response.data }
   });
-
-  history.push("/");
 };
 
 export const logout = () => async (dispatch, getState) => {
@@ -46,7 +55,7 @@ export const logout = () => async (dispatch, getState) => {
     type: LOGOUT
   });
 
-  history.push("/");
+  history.goBack();
 };
 
 export const register = (username, email, password) => async dispatch => {
@@ -67,8 +76,6 @@ export const register = (username, email, password) => async dispatch => {
   dispatch({
     type: REGISTER
   });
-
-  history.push("/login");
 };
 
 export const getUser = userId => async (dispatch, getState) => {
@@ -83,4 +90,89 @@ export const getUser = userId => async (dispatch, getState) => {
     type: GET_USER,
     payload: { data: response.data }
   });
+};
+
+export const applyFilters = filters => {
+  return {
+    type: APPLY_FILTERS,
+    payload: { filters: filters }
+  };
+};
+
+export const getNotes = (filters, limit = 25) => async (dispatch, getState) => {
+  const filtersQuery =
+    filters.subjects.length > 0
+      ? `&subjects=in:${filters.subjects.join(",")}`
+      : "";
+
+  const response = await backend.get(`/notes/?limit=${limit}${filtersQuery}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getState().auth.user.loggedIn
+        ? `Bearer ${getState().auth.tokens.access}`
+        : ""
+    }
+  });
+
+  dispatch({
+    type: GET_NOTES,
+    payload: { data: response.data }
+  });
+};
+
+export const getMoreNotes = url => async (dispatch, getState) => {
+  if (url) {
+    const response = await axios.get(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getState().auth.user.loggedIn
+          ? `Bearer ${getState().auth.tokens.access}`
+          : ""
+      }
+    });
+
+    dispatch({
+      type: GET_MORE_NOTES,
+      payload: { data: response.data }
+    });
+  }
+};
+
+export const getLinks = (filters, limit = 25) => async (dispatch, getState) => {
+  const filtersQuery =
+    filters.subjects.length > 0
+      ? `&subjects=in:${filters.subjects.join(",")}`
+      : "";
+
+  const response = await backend.get(`/links/?limit=${limit}${filtersQuery}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getState().auth.user.loggedIn
+        ? `Bearer ${getState().auth.tokens.access}`
+        : ""
+    }
+  });
+
+  dispatch({
+    type: GET_LINKS,
+    payload: { data: response.data }
+  });
+};
+
+export const getMoreLinks = url => async (dispatch, getState) => {
+  if (url) {
+    const response = await axios.get(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getState().auth.user.loggedIn
+          ? `Bearer ${getState().auth.tokens.access}`
+          : ""
+      }
+    });
+
+    dispatch({
+      type: GET_MORE_LINKS,
+      payload: { data: response.data }
+    });
+  }
 };

@@ -3,7 +3,6 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import PropTypes from "prop-types";
 
 export default function Modal(props) {
   const { onClose, open } = props;
@@ -40,8 +39,3 @@ export default function Modal(props) {
     </div>
   );
 }
-
-Modal.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired
-};

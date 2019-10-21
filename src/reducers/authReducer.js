@@ -1,4 +1,4 @@
-import { LOGIN, LOGOUT, GET_USER, REFRESH_TOKENS } from "../actions/types";
+import { LOGIN, LOGOUT, GET_USER, REFRESH_TOKENS } from "../constants";
 import { getTokenPayload } from "../utils/otherUtils";
 
 export default (state = {}, action) => {

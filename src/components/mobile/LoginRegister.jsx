@@ -2,15 +2,14 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import TabPanel from "./TabPanel";
+import TabPanel from "../TabPanel";
 
-import Login from "./Login";
-import Register from "./Register";
-import Modal from "./Modal";
-import history from "../history";
-import AdapterLink from "./AdapterLink";
-import { popUrl } from "../utils/otherUtils";
+import LoginForm from "../LoginForm";
+import RegisterForm from "../RegisterForm";
+import AdapterLink from "../AdapterLink";
+import history from "../../history";
 
+// TODO: move to form style
 const styles = theme => ({
   textField: {
     width: "100%"
@@ -29,10 +28,6 @@ class LoginRegister extends React.Component {
     };
   }
 
-  handleModalClose = () => {
-    history.push(popUrl(history.location.pathname));
-  };
-
   handleTabChange = (event, newTab) => {
     this.setState({ tab: newTab });
   };
@@ -40,7 +35,7 @@ class LoginRegister extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <Modal open={true} onClose={this.handleModalClose}>
+      <React.Fragment>
         <Tabs
           value={this.state.tab}
           onChange={this.handleTabChange}
@@ -53,13 +48,21 @@ class LoginRegister extends React.Component {
         </Tabs>
 
         <TabPanel value={this.state.tab} index={0}>
-          <Login classes={classes} onClose={this.handleModalClose} />
+          <LoginForm
+            classes={classes}
+            onClose={() => history.push("/")}
+            onFormSuccess={() => history.push("/")}
+          />
         </TabPanel>
 
         <TabPanel value={this.state.tab} index={1}>
-          <Register classes={classes} onClose={this.handleModalClose} />
+          <RegisterForm
+            classes={classes}
+            onClose={() => history.push("/")}
+            onFormSuccess={() => history.push("/login")}
+          />
         </TabPanel>
-      </Modal>
+      </React.Fragment>
     );
   }
 }

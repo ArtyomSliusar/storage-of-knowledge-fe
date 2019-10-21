@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import { Router, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
 
-import Navbar from "./Navbar";
+import Navbar from "./NavBar";
 import Home from "./Home";
-import LoginRegister from "./LoginRegister";
+import LoginRegister from "./mobile/LoginRegister";
 import history from "../history";
-import Contact from "./Contact";
+import Contact from "./mobile/Contact";
 import Logout from "./Logout";
 import { withStyles } from "@material-ui/core";
+import Filters from "./mobile/Filters";
 
 const styles = theme => ({
   wrapper: {
@@ -53,6 +54,7 @@ class App extends Component {
             />
             <Route exact path="/logout" component={Logout} />
             <Route exact path="/contact" component={Contact} />
+            <Route exact path="/filters" component={Filters} />
           </div>
         </div>
       </Router>

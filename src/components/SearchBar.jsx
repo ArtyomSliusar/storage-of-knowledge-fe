@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+// TODO: update storage notes/links so that SearchResults is re-rendered
 export default function SearchBar(props) {
   const classes = useStyles();
 
