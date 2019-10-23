@@ -99,20 +99,32 @@ export const applyFilters = filters => {
   };
 };
 
-export const getNotes = (filters, limit = 25) => async (dispatch, getState) => {
+export const getNotes = ({
+  filters,
+  limit = 15,
+  orderBy = "title",
+  order = "asc"
+} = {}) => async (dispatch, getState) => {
+  const limitQuery = `limit=${limit}`;
+
   const filtersQuery =
     filters.subjects.length > 0
       ? `&subjects=in:${filters.subjects.join(",")}`
       : "";
 
-  const response = await backend.get(`/notes/?limit=${limit}${filtersQuery}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: getState().auth.user.loggedIn
-        ? `Bearer ${getState().auth.tokens.access}`
-        : ""
+  const orderQuery = `&ordering=${order === "desc" ? "-" + orderBy : orderBy}`;
+
+  const response = await backend.get(
+    `/notes/?${limitQuery}${filtersQuery}${orderQuery}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getState().auth.user.loggedIn
+          ? `Bearer ${getState().auth.tokens.access}`
+          : ""
+      }
     }
-  });
+  );
 
   dispatch({
     type: GET_NOTES,
@@ -138,20 +150,32 @@ export const getMoreNotes = url => async (dispatch, getState) => {
   }
 };
 
-export const getLinks = (filters, limit = 25) => async (dispatch, getState) => {
+export const getLinks = ({
+  filters,
+  limit = 15,
+  orderBy = "title",
+  order = "asc"
+} = {}) => async (dispatch, getState) => {
+  const limitQuery = `limit=${limit}`;
+
   const filtersQuery =
     filters.subjects.length > 0
       ? `&subjects=in:${filters.subjects.join(",")}`
       : "";
 
-  const response = await backend.get(`/links/?limit=${limit}${filtersQuery}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: getState().auth.user.loggedIn
-        ? `Bearer ${getState().auth.tokens.access}`
-        : ""
+  const orderQuery = `&ordering=${order === "desc" ? "-" + orderBy : orderBy}`;
+
+  const response = await backend.get(
+    `/links/?${limitQuery}${filtersQuery}${orderQuery}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getState().auth.user.loggedIn
+          ? `Bearer ${getState().auth.tokens.access}`
+          : ""
+      }
     }
-  });
+  );
 
   dispatch({
     type: GET_LINKS,

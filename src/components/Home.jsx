@@ -1,16 +1,15 @@
-import React, { useEffect } from "react";
-import SearchBar from "./SearchBar";
+import React from "react";
 import { makeStyles, useTheme } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery/useMediaQuery";
+import Button from "@material-ui/core/Button";
+import { connect } from "react-redux";
+
+import SearchBar from "./SearchBar";
 import MobileResults from "./mobile/SearchResults";
 import WebResults from "./web/SearchResults";
-import Button from "@material-ui/core/Button";
 import AdapterLink from "./AdapterLink";
 import Modal from "./Modal";
 import AvailableFilters from "./AvailableFilters";
-import { connect } from "react-redux";
-import { LINK, NOTE } from "../constants";
-import { getLinks, getNotes } from "../actions";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -37,20 +36,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Home({ filters, getNotes, getLinks }) {
+function Home({ filters }) {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
-  const [modalOpen, setModalOpen] = React.useState(false);
   const classes = useStyles();
+  const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const filtersCount = filters.subjects.length;
-
-  useEffect(() => {
-    if (filters.type === NOTE) {
-      getNotes(filters);
-    } else if (filters.type === LINK) {
-      getLinks(filters);
-    }
-  }, [filters]);
+  const [modalOpen, setModalOpen] = React.useState(false);
 
   return (
     <div className={classes.root}>
@@ -103,5 +94,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { getNotes, getLinks }
+  {}
 )(Home);

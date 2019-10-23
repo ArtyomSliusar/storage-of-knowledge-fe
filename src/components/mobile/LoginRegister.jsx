@@ -11,6 +11,10 @@ import history from "../../history";
 
 // TODO: move to form style
 const styles = theme => ({
+  root: {
+    maxWidth: 600,
+    margin: "auto"
+  },
   textField: {
     width: "100%"
   },
@@ -35,7 +39,7 @@ class LoginRegister extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <React.Fragment>
+      <div className={classes.root}>
         <Tabs
           value={this.state.tab}
           onChange={this.handleTabChange}
@@ -62,7 +66,7 @@ class LoginRegister extends React.Component {
             onFormSuccess={() => history.push("/login")}
           />
         </TabPanel>
-      </React.Fragment>
+      </div>
     );
   }
 }

@@ -1,17 +1,17 @@
-import React, { Component } from "react";
+import React from "react";
 import { Router, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
 
 import Navbar from "./NavBar";
 import Home from "./Home";
-import LoginRegister from "./mobile/LoginRegister";
+import MobileLoginRegister from "./mobile/LoginRegister";
 import history from "../history";
-import Contact from "./mobile/Contact";
+import MobileContact from "./mobile/Contact";
 import Logout from "./Logout";
-import { withStyles } from "@material-ui/core";
-import Filters from "./mobile/Filters";
+import { makeStyles } from "@material-ui/core";
+import MobileFilters from "./mobile/Filters";
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   wrapper: {
     display: "flex",
     flexFlow: "row wrap",
@@ -30,36 +30,32 @@ const styles = theme => ({
       }
     }
   }
-});
+}));
 
-class App extends Component {
-  render() {
-    const { classes } = this.props;
-    return (
-      <Router history={history}>
-        <div className={classes.wrapper}>
-          <Navbar className={classes.header} />
+export default function App() {
+  const classes = useStyles();
+  return (
+    <Router history={history}>
+      <div className={classes.wrapper}>
+        <Navbar className={classes.header} />
 
-          <div className={classes.main}>
-            <Route exact path="/" component={Home} />
-            <Route
-              exact
-              path="/login"
-              render={props => <LoginRegister {...props} tab={0} />}
-            />
-            <Route
-              exact
-              path="/register"
-              render={props => <LoginRegister {...props} tab={1} />}
-            />
-            <Route exact path="/logout" component={Logout} />
-            <Route exact path="/contact" component={Contact} />
-            <Route exact path="/filters" component={Filters} />
-          </div>
+        <div className={classes.main}>
+          <Route exact path="/" component={Home} />
+          <Route
+            exact
+            path="/login"
+            render={props => <MobileLoginRegister {...props} tab={0} />}
+          />
+          <Route
+            exact
+            path="/register"
+            render={props => <MobileLoginRegister {...props} tab={1} />}
+          />
+          <Route exact path="/logout" component={Logout} />
+          <Route exact path="/contact" component={MobileContact} />
+          <Route exact path="/filters" component={MobileFilters} />
         </div>
-      </Router>
-    );
-  }
+      </div>
+    </Router>
+  );
 }
-
-export default withStyles(styles)(App);
