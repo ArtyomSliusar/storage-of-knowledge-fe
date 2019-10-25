@@ -1,5 +1,5 @@
 import React from "react";
-import { Router, Route } from "react-router-dom";
+import { Router, Route, Switch } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
 
 import Navbar from "./NavBar";
@@ -40,20 +40,22 @@ export default function App() {
         <Navbar className={classes.header} />
 
         <div className={classes.main}>
-          <Route exact path="/" component={Home} />
-          <Route
-            exact
-            path="/login"
-            render={props => <MobileLoginRegister {...props} tab={0} />}
-          />
-          <Route
-            exact
-            path="/register"
-            render={props => <MobileLoginRegister {...props} tab={1} />}
-          />
-          <Route exact path="/logout" component={Logout} />
-          <Route exact path="/contact" component={MobileContact} />
-          <Route exact path="/filters" component={MobileFilters} />
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route
+              exact
+              path="/login"
+              render={props => <MobileLoginRegister {...props} tab={0} />}
+            />
+            <Route
+              exact
+              path="/register"
+              render={props => <MobileLoginRegister {...props} tab={1} />}
+            />
+            <Route exact path="/logout" component={Logout} />
+            <Route exact path="/contact" component={MobileContact} />
+            <Route exact path="/filters" component={MobileFilters} />
+          </Switch>
         </div>
       </div>
     </Router>

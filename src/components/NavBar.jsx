@@ -7,8 +7,7 @@ import { getUser } from "../actions";
 import MobileNavBar from "./mobile/NavBar";
 import WebNavBar from "./web/NavBar";
 
-function NavBar(props) {
-  const { userId, getUser, loggedIn } = props;
+function NavBar({ userId, getUser, loggedIn }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const userMenuItems = {

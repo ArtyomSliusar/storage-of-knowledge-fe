@@ -5,10 +5,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 export default function Modal(props) {
-  const { onClose, open } = props;
-
   const handleClose = () => {
-    onClose();
+    props.onClose();
   };
 
   const OptionalTitle = () => {
@@ -28,7 +26,7 @@ export default function Modal(props) {
   return (
     <div>
       <Dialog
-        open={open}
+        open={props.open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >

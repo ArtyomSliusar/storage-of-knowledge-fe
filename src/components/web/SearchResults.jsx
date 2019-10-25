@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -10,7 +10,7 @@ import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { connect } from "react-redux";
 
-import { getMoreNotes, getMoreLinks, getNotes, getLinks } from "../../actions";
+import { getMoreNotes, getMoreLinks } from "../../actions";
 import CustomTableHead from "../CustomTableHead";
 import TablePaginationActions from "../TablePaginationActions";
 import { LINK, NOTE } from "../../constants";
@@ -46,44 +46,41 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function SearchResults(props) {
-  const {
-    notes,
-    links,
-    filters,
-    getNotes,
-    getLinks,
-    getMoreNotes,
-    getMoreLinks,
-    loggedIn
-  } = props;
+function SearchResults({
+  notes,
+  links,
+  filters,
+  getMoreNotes,
+  getMoreLinks,
+  page,
+  order,
+  orderBy,
+  rowsPerPage,
+  setPage,
+  setOrder,
+  setOrderBy,
+  setRowsPerPage
+}) {
   const classes = useStyles();
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("title");
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(15);
 
-  useEffect(() => {
-    if (filters.type === NOTE) {
-      getNotes({ filters, orderBy, order, limit: rowsPerPage });
-    } else if (filters.type === LINK) {
-      getLinks({ filters, orderBy, order, limit: rowsPerPage });
-    }
-    setPage(0);
-  }, [filters, orderBy, order, rowsPerPage, loggedIn]);
-
-  const handleRequestSort = (event, property) => {
-    const isDesc = orderBy === property && order === "desc";
-    setOrder(isDesc ? "asc" : "desc");
-    setOrderBy(property);
-  };
-
-  const handleClick = (event, name) => {
+  const handleRowClick = (event, name) => {
     // TODO: redirect to item's page
     console.log(`open item ${name}`);
   };
 
-  const handleChangePage = (event, newPage) => {
+  const handleSortChange = (event, property) => {
+    const isDesc = orderBy === property && order === "desc";
+    setOrder(isDesc ? "asc" : "desc");
+    setOrderBy(property);
+    setPage(0);
+  };
+
+  const handleRowsPerPageChange = event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handlePageChange = (event, newPage) => {
     const requestedItems = newPage * rowsPerPage + rowsPerPage;
 
     if (filters.type === NOTE && notes.results.length < requestedItems) {
@@ -93,11 +90,6 @@ function SearchResults(props) {
     }
 
     setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   const renderTable = () => {
@@ -114,7 +106,7 @@ function SearchResults(props) {
             classes={classes}
             order={order}
             orderBy={orderBy}
-            onRequestSort={handleRequestSort}
+            onRequestSort={handleSortChange}
             headCells={headCells}
           />
           <TableBody>
@@ -124,7 +116,7 @@ function SearchResults(props) {
                 <TableRow
                   key={item.id}
                   hover
-                  onClick={event => handleClick(event, item.id)}
+                  onClick={event => handleRowClick(event, item.id)}
                 >
                   <TableCell component="th" scope="row">
                     {item.title}
@@ -148,8 +140,8 @@ function SearchResults(props) {
                   inputProps: { "aria-label": "rows per page" },
                   native: true
                 }}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
+                onChangePage={handlePageChange}
+                onChangeRowsPerPage={handleRowsPerPageChange}
                 ActionsComponent={TablePaginationActions}
               />
             </TableRow>
@@ -170,16 +162,16 @@ function SearchResults(props) {
   );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     notes: state.notes,
     links: state.links,
     filters: state.filters,
-    loggedIn: state.auth.user.loggedIn
+    ...ownProps
   };
 };
 
 export default connect(
   mapStateToProps,
-  { getMoreNotes, getMoreLinks, getNotes, getLinks }
+  { getMoreNotes, getMoreLinks }
 )(SearchResults);

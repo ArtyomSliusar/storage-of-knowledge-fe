@@ -25,9 +25,20 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-// TODO: update storage notes/links so that SearchResults is re-rendered
-export default function SearchBar(props) {
+export default function SearchBar({
+  searchQuery,
+  setSearchQuery,
+  handleSearchRequest
+}) {
   const classes = useStyles();
+
+  const keyPress = event => {
+    if (event.keyCode === 13) {
+      handleSearchRequest(event);
+    } else {
+      console.log("suggestion call");
+    }
+  };
 
   return (
     <Paper className={classes.root}>
@@ -35,9 +46,16 @@ export default function SearchBar(props) {
         className={classes.input}
         placeholder="Search"
         inputProps={{ "aria-label": "search" }}
+        value={searchQuery}
+        onChange={event => setSearchQuery(event.target.value)}
+        onKeyDown={keyPress}
       />
       <Divider className={classes.divider} orientation="vertical" />
-      <IconButton className={classes.iconButton} aria-label="search">
+      <IconButton
+        className={classes.iconButton}
+        aria-label="search"
+        onClick={handleSearchRequest}
+      >
         <SearchIcon />
       </IconButton>
     </Paper>

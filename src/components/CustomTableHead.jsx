@@ -20,8 +20,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function CustomTableHead(props) {
-  const { order, orderBy, onRequestSort, headCells } = props;
+export default function CustomTableHead({
+  order,
+  orderBy,
+  onRequestSort,
+  headCells
+}) {
   const classes = useStyles();
   const createSortHandler = property => event => {
     onRequestSort(event, property);
@@ -66,5 +70,5 @@ CustomTableHead.propTypes = {
   headCells: PropTypes.array.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired
+  orderBy: PropTypes.string
 };

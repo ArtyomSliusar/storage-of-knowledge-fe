@@ -40,7 +40,6 @@ const useStyles = makeStyles(theme => ({
 const itemTypes = ["Note", "Link"];
 
 function AvailableFilters(props) {
-  const { onCancel, afterApply } = props;
   const classes = useStyles();
   const [subjects, setSubjects] = React.useState([]);
   const [selectedSubjects, setSelectedSubjects] = React.useState([
@@ -53,7 +52,7 @@ function AvailableFilters(props) {
       subjects: selectedSubjects,
       type: selectedType
     });
-    afterApply();
+    props.onApplyCallback();
   };
 
   const IsSubjectEnabled = subject => {
@@ -131,7 +130,7 @@ function AvailableFilters(props) {
         Apply
       </Button>
 
-      <Button variant="contained" size="medium" onClick={onCancel}>
+      <Button variant="contained" size="medium" onClick={props.onCancel}>
         Cancel
       </Button>
 

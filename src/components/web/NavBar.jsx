@@ -5,10 +5,10 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 
 import logo from "../../logo.svg";
-import AdapterLink from "../AdapterLink";
 import UserMenu from "./UserMenu";
 import LoginRegister from "./LoginRegister";
 import Contact from "./Contact";
+import AdapterLink from "../AdapterLink";
 
 const useStyles = makeStyles(theme => ({
   navButton: {

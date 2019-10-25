@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import InfiniteScroll from "react-infinite-scroller";
 import { connect } from "react-redux";
 import List from "@material-ui/core/List";
@@ -14,7 +14,7 @@ import NoteIcon from "@material-ui/icons/Note";
 import LinkIcon from "@material-ui/icons/Link";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 
-import { getMoreNotes, getMoreLinks, getNotes, getLinks } from "../../actions";
+import { getMoreNotes, getMoreLinks } from "../../actions";
 import { LINK, NOTE } from "../../constants";
 
 const useStyles = makeStyles(theme => ({
@@ -27,24 +27,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function SearchResults({
-  getMoreNotes,
-  getMoreLinks,
-  getNotes,
-  getLinks,
-  notes,
-  links,
-  filters
-}) {
+function SearchResults({ getMoreNotes, getMoreLinks, notes, links, filters }) {
   const classes = useStyles();
-
-  useEffect(() => {
-    if (filters.type === NOTE) {
-      getNotes({ filters });
-    } else if (filters.type === LINK) {
-      getLinks({ filters });
-    }
-  }, [filters]);
 
   const renderNotes = () => {
     if (notes.results) {
@@ -150,5 +134,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { getMoreNotes, getMoreLinks, getNotes, getLinks }
+  { getMoreNotes, getMoreLinks }
 )(SearchResults);

@@ -101,21 +101,26 @@ export const applyFilters = filters => {
 
 export const getNotes = ({
   filters,
+  search,
+  orderBy,
   limit = 15,
-  orderBy = "title",
   order = "asc"
 } = {}) => async (dispatch, getState) => {
   const limitQuery = `limit=${limit}`;
+
+  const searchQuery = search ? `&search=${search}` : "";
 
   const filtersQuery =
     filters.subjects.length > 0
       ? `&subjects=in:${filters.subjects.join(",")}`
       : "";
 
-  const orderQuery = `&ordering=${order === "desc" ? "-" + orderBy : orderBy}`;
+  const orderQuery = orderBy
+    ? `&ordering=${order === "desc" ? "-" + orderBy : orderBy}`
+    : "";
 
   const response = await backend.get(
-    `/notes/?${limitQuery}${filtersQuery}${orderQuery}`,
+    `/notes/?${limitQuery}${filtersQuery}${searchQuery}${orderQuery}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -152,21 +157,26 @@ export const getMoreNotes = url => async (dispatch, getState) => {
 
 export const getLinks = ({
   filters,
+  search,
+  orderBy,
   limit = 15,
-  orderBy = "title",
   order = "asc"
 } = {}) => async (dispatch, getState) => {
   const limitQuery = `limit=${limit}`;
+
+  const searchQuery = search ? `&search=${search}` : "";
 
   const filtersQuery =
     filters.subjects.length > 0
       ? `&subjects=in:${filters.subjects.join(",")}`
       : "";
 
-  const orderQuery = `&ordering=${order === "desc" ? "-" + orderBy : orderBy}`;
+  const orderQuery = orderBy
+    ? `&ordering=${order === "desc" ? "-" + orderBy : orderBy}`
+    : "";
 
   const response = await backend.get(
-    `/links/?${limitQuery}${filtersQuery}${orderQuery}`,
+    `/links/?${limitQuery}${filtersQuery}${searchQuery}${orderQuery}`,
     {
       headers: {
         "Content-Type": "application/json",

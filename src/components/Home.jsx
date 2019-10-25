@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery/useMediaQuery";
 import Button from "@material-ui/core/Button";
@@ -10,6 +10,8 @@ import WebResults from "./web/SearchResults";
 import AdapterLink from "./AdapterLink";
 import Modal from "./Modal";
 import AvailableFilters from "./AvailableFilters";
+import { LINK, NOTE } from "../constants";
+import { getLinks, getNotes } from "../actions";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,17 +38,66 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Home({ filters }) {
+function Home({ filters, loggedIn, getNotes, getLinks }) {
   const theme = useTheme();
   const classes = useStyles();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const filtersCount = filters.subjects.length;
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("title");
+  const [rowsPerPage, setRowsPerPage] = React.useState(15);
+  const [page, setPage] = React.useState(0);
+
+  const downloadItems = () => {
+    if (filters.type === NOTE) {
+      getNotes({
+        filters,
+        orderBy,
+        order,
+        limit: rowsPerPage,
+        search: searchQuery
+      });
+    } else if (filters.type === LINK) {
+      getLinks({
+        filters,
+        orderBy,
+        order,
+        limit: rowsPerPage,
+        search: searchQuery
+      });
+    }
+    setPage(0);
+  };
+
+  useEffect(() => {
+    downloadItems();
+  }, [filters, orderBy, order, rowsPerPage, loggedIn]);
+
+  const handleSearchRequest = event => {
+    // remove ordering and initiate its value change, in order for useEffect
+    // to be called
+    setOrderBy(orderBy === "" ? null : "");
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
+  const callbackOnModalApply = () => {
+    handleModalClose();
+    setSearchQuery("");
+  };
 
   return (
     <div className={classes.root}>
       <div className={classes.search}>
-        <SearchBar />
+        <SearchBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          handleSearchRequest={handleSearchRequest}
+        />
       </div>
 
       <div className={classes.filter}>
@@ -73,13 +124,26 @@ function Home({ filters }) {
       </div>
 
       <div className={classes.results}>
-        {isMobile ? <MobileResults /> : <WebResults />}
+        {isMobile ? (
+          <MobileResults />
+        ) : (
+          <WebResults
+            page={page}
+            order={order}
+            orderBy={orderBy}
+            rowsPerPage={rowsPerPage}
+            setPage={setPage}
+            setOrder={setOrder}
+            setOrderBy={setOrderBy}
+            setRowsPerPage={setRowsPerPage}
+          />
+        )}
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+      <Modal open={modalOpen} onClose={handleModalClose}>
         <AvailableFilters
-          onCancel={() => setModalOpen(false)}
-          afterApply={() => setModalOpen(false)}
+          onCancel={handleModalClose}
+          onApplyCallback={callbackOnModalApply}
         />
       </Modal>
     </div>
@@ -88,11 +152,12 @@ function Home({ filters }) {
 
 const mapStateToProps = state => {
   return {
-    filters: state.filters
+    filters: state.filters,
+    loggedIn: state.auth.user.loggedIn
   };
 };
 
 export default connect(
   mapStateToProps,
-  {}
+  { getNotes, getLinks }
 )(Home);
