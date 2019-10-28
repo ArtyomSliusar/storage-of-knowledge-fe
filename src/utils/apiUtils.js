@@ -1,7 +1,9 @@
 import backend from "../apis/backend";
+import { LINK, NOTE } from "../constants";
+import store from "../store";
 
 /**
- * Requests with no authentication and no storage update.
+ * Requests with no storage update AND no authentication token refresh.
  */
 
 async function contact(name, email, message) {
@@ -28,4 +30,21 @@ async function getSubjects() {
   });
 }
 
-export { contact, getSubjects };
+async function getSuggestions(filters, query) {
+  let collection;
+  if (filters.type === NOTE) {
+    collection = "notes";
+  } else if (filters.type === LINK) {
+    collection = "links";
+  }
+  return await backend.get(`/${collection}/suggestions/?query=${query}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: store.getState().auth.user.loggedIn
+        ? `Bearer ${store.getState().auth.tokens.access}`
+        : ""
+    }
+  });
+}
+
+export { contact, getSubjects, getSuggestions };
