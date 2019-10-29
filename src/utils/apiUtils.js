@@ -1,9 +1,8 @@
 import backend from "../apis/backend";
 import { LINK, NOTE } from "../constants";
-import store from "../store";
 
 /**
- * Requests with no storage update AND no authentication token refresh.
+ * Requests with no storage update AND no authentication.
  */
 
 async function contact(name, email, message) {
@@ -39,10 +38,7 @@ async function getSuggestions(filters, query) {
   }
   return await backend.get(`/${collection}/suggestions/?query=${query}`, {
     headers: {
-      "Content-Type": "application/json",
-      Authorization: store.getState().auth.user.loggedIn
-        ? `Bearer ${store.getState().auth.tokens.access}`
-        : ""
+      "Content-Type": "application/json"
     }
   });
 }
