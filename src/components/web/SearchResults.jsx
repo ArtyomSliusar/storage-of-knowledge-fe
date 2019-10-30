@@ -13,7 +13,10 @@ import { connect } from "react-redux";
 import { getMoreNotes, getMoreLinks } from "../../actions";
 import CustomTableHead from "../CustomTableHead";
 import TablePaginationActions from "../TablePaginationActions";
-import { LINK, NOTE } from "../../constants";
+import { LINKS, NOTES } from "../../constants";
+import NoteIcon from "@material-ui/icons/Note";
+import LinkIcon from "@material-ui/icons/Link";
+import history from "../../history";
 
 const headCells = [
   {
@@ -39,10 +42,17 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(3)
   },
   table: {
-    minWidth: 500
+    minWidth: 500,
+    "& tbody tr": {
+      cursor: "pointer"
+    }
   },
   tableWrapper: {
-    overflowX: "auto"
+    overflowX: "auto",
+    textAlign: "center"
+  },
+  itemIcon: {
+    marginRight: theme.spacing(1)
   }
 }));
 
@@ -83,9 +93,12 @@ function SearchResults({
   const handlePageChange = (event, newPage) => {
     const requestedItems = newPage * rowsPerPage + rowsPerPage;
 
-    if (filters.type === NOTE && notes.results.length < requestedItems) {
+    if (filters.type === NOTES && notes.results.length < requestedItems) {
       getMoreNotes(notes.next);
-    } else if (filters.type === LINK && links.results.length < requestedItems) {
+    } else if (
+      filters.type === LINKS &&
+      links.results.length < requestedItems
+    ) {
       getMoreLinks(links.next);
     }
 
@@ -94,10 +107,13 @@ function SearchResults({
 
   const renderTable = () => {
     let items = {};
-    if (filters.type === NOTE) {
+    let icon;
+    if (filters.type === NOTES) {
       items = notes;
-    } else if (filters.type === LINK) {
+      icon = <NoteIcon fontSize="small" className={classes.itemIcon} />;
+    } else if (filters.type === LINKS) {
       items = links;
+      icon = <LinkIcon fontSize="small" className={classes.itemIcon} />;
     }
     if (items.results) {
       return (
@@ -118,7 +134,8 @@ function SearchResults({
                   hover
                   onClick={event => handleRowClick(event, item.id)}
                 >
-                  <TableCell component="th" scope="row">
+                  <TableCell align="left">
+                    {icon}
                     {item.title}
                   </TableCell>
                   <TableCell align="right">{item.subjects}</TableCell>

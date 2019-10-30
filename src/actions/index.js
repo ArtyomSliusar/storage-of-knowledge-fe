@@ -55,7 +55,7 @@ export const logout = () => async (dispatch, getState) => {
     type: LOGOUT
   });
 
-  history.goBack();
+  history.push("/");
 };
 
 export const register = (username, email, password) => async dispatch => {

@@ -10,7 +10,7 @@ import WebResults from "./web/SearchResults";
 import AdapterLink from "./AdapterLink";
 import Modal from "./Modal";
 import AvailableFilters from "./AvailableFilters";
-import { LINK, NOTE } from "../constants";
+import { LINKS, NOTES } from "../constants";
 import { getLinks, getNotes } from "../actions";
 
 const useStyles = makeStyles(theme => ({
@@ -51,7 +51,7 @@ function Home({ filters, loggedIn, getNotes, getLinks }) {
   const [page, setPage] = React.useState(0);
 
   const downloadItems = () => {
-    if (filters.type === NOTE) {
+    if (filters.type === NOTES) {
       getNotes({
         filters,
         orderBy,
@@ -59,7 +59,7 @@ function Home({ filters, loggedIn, getNotes, getLinks }) {
         limit: rowsPerPage,
         search: searchQuery
       });
-    } else if (filters.type === LINK) {
+    } else if (filters.type === LINKS) {
       getLinks({
         filters,
         orderBy,

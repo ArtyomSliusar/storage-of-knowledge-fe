@@ -1,4 +1,4 @@
-import { NOTE } from "../constants";
+import { NOTES } from "../constants";
 
 function setLocalStorageState(state) {
   try {
@@ -44,7 +44,7 @@ function getInitialState() {
     },
     filters: {
       subjects: [],
-      type: NOTE
+      type: NOTES
     },
     notes: [],
     links: []

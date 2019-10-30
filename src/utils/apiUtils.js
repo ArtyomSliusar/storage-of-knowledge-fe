@@ -1,5 +1,5 @@
 import backend from "../apis/backend";
-import { LINK, NOTE } from "../constants";
+import { LINKS, NOTES } from "../constants";
 
 /**
  * Requests with no storage update AND no authentication.
@@ -30,13 +30,7 @@ async function getSubjects() {
 }
 
 async function getSuggestions(filters, query) {
-  let collection;
-  if (filters.type === NOTE) {
-    collection = "notes";
-  } else if (filters.type === LINK) {
-    collection = "links";
-  }
-  return await backend.get(`/${collection}/suggestions/?query=${query}`, {
+  return await backend.get(`/${filters.type}/suggestions/?query=${query}`, {
     headers: {
       "Content-Type": "application/json"
     }

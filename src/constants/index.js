@@ -1,6 +1,6 @@
 // Common
-export const NOTE = "Note";
-export const LINK = "Link";
+export const NOTES = "notes";
+export const LINKS = "links";
 
 // API
 export const API_VERSION = "v1";

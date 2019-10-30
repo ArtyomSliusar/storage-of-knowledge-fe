@@ -9,13 +9,12 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import IconButton from "@material-ui/core/IconButton";
-import Avatar from "@material-ui/core/Avatar";
 import NoteIcon from "@material-ui/icons/Note";
 import LinkIcon from "@material-ui/icons/Link";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 
 import { getMoreNotes, getMoreLinks } from "../../actions";
-import { LINK, NOTE } from "../../constants";
+import { LINKS, NOTES } from "../../constants";
 
 const useStyles = makeStyles(theme => ({
   loader: {
@@ -24,6 +23,9 @@ const useStyles = makeStyles(theme => ({
   likes: {
     textAlign: "center",
     fontSize: "small"
+  },
+  listItem: {
+    minWidth: theme.spacing(4)
   }
 }));
 
@@ -34,10 +36,8 @@ function SearchResults({ getMoreNotes, getMoreLinks, notes, links, filters }) {
     if (notes.results) {
       return notes.results.map(note => (
         <ListItem key={note.id} dense={true} button={true}>
-          <ListItemAvatar>
-            <Avatar>
-              <NoteIcon />
-            </Avatar>
+          <ListItemAvatar className={classes.listItem}>
+            <NoteIcon fontSize="small" />
           </ListItemAvatar>
           <ListItemText
             primary={note.title}
@@ -60,10 +60,8 @@ function SearchResults({ getMoreNotes, getMoreLinks, notes, links, filters }) {
     if (links.results) {
       return links.results.map(link => (
         <ListItem key={link.id} dense={true} button={true}>
-          <ListItemAvatar>
-            <Avatar>
-              <LinkIcon />
-            </Avatar>
+          <ListItemAvatar className={classes.listItem}>
+            <LinkIcon fontSize="small" />
           </ListItemAvatar>
           <ListItemText
             primary={link.title}
@@ -83,17 +81,17 @@ function SearchResults({ getMoreNotes, getMoreLinks, notes, links, filters }) {
   };
 
   const renderResults = () => {
-    if (filters.type === NOTE) {
+    if (filters.type === NOTES) {
       return renderNotes();
-    } else if (filters.type === LINK) {
+    } else if (filters.type === LINKS) {
       return renderLinks();
     }
   };
 
   const loadMoreItems = () => {
-    if (filters.type === NOTE) {
+    if (filters.type === NOTES) {
       return getMoreNotes(notes.next);
-    } else if (filters.type === LINK) {
+    } else if (filters.type === LINKS) {
       return getMoreLinks(links.next);
     }
   };
@@ -105,9 +103,9 @@ function SearchResults({ getMoreNotes, getMoreLinks, notes, links, filters }) {
   );
 
   const hasMoreItems = () => {
-    if (filters.type === NOTE) {
+    if (filters.type === NOTES) {
       return notes.results && notes.count > notes.results.length;
-    } else if (filters.type === LINK) {
+    } else if (filters.type === LINKS) {
       return links.results && links.count > links.results.length;
     }
   };
