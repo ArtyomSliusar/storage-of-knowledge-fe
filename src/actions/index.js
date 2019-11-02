@@ -4,11 +4,19 @@ import {
   GET_LINKS,
   GET_MORE_LINKS,
   GET_MORE_NOTES,
+  GET_NOTE_DETAILS,
   GET_NOTES,
   GET_USER,
   LOGIN,
   LOGOUT,
-  REGISTER
+  OPEN_SNACKBAR,
+  CLOSE_SNACKBAR,
+  REGISTER,
+  UPDATE_NOTE,
+  DELETE_NOTE,
+  GET_LINK_DETAILS,
+  DELETE_LINK,
+  UPDATE_LINK
 } from "../constants";
 import history from "../history";
 import axios from "axios";
@@ -96,6 +104,19 @@ export const applyFilters = filters => {
   return {
     type: APPLY_FILTERS,
     payload: { filters: filters }
+  };
+};
+
+export const openSnackbar = (message, type) => {
+  return {
+    type: OPEN_SNACKBAR,
+    payload: { message: message, type: type }
+  };
+};
+
+export const closeSnackbar = () => {
+  return {
+    type: CLOSE_SNACKBAR
   };
 };
 
@@ -209,4 +230,118 @@ export const getMoreLinks = url => async (dispatch, getState) => {
       payload: { data: response.data }
     });
   }
+};
+
+export const getNote = id => async (dispatch, getState) => {
+  const response = await backend.get(`/notes/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getState().auth.user.loggedIn
+        ? `Bearer ${getState().auth.tokens.access}`
+        : ""
+    }
+  });
+
+  dispatch({
+    type: GET_NOTE_DETAILS,
+    payload: { data: response.data }
+  });
+};
+
+export const updateNote = (noteId, noteData) => async (dispatch, getState) => {
+  const response = await backend.put(
+    `/notes/${noteId}`,
+    {
+      title: noteData.title,
+      subjects: noteData.subjects,
+      private: noteData.private,
+      user: getState().auth.user.username,
+      body: noteData.body
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getState().auth.user.loggedIn
+          ? `Bearer ${getState().auth.tokens.access}`
+          : ""
+      }
+    }
+  );
+
+  dispatch({
+    type: UPDATE_NOTE,
+    payload: { data: response.data }
+  });
+};
+
+export const updateLink = (linkId, linkData) => async (dispatch, getState) => {
+  const response = await backend.put(
+    `/links/${linkId}`,
+    {
+      title: linkData.title,
+      subjects: linkData.subjects,
+      private: linkData.private,
+      user: getState().auth.user.username,
+      link: linkData.link
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getState().auth.user.loggedIn
+          ? `Bearer ${getState().auth.tokens.access}`
+          : ""
+      }
+    }
+  );
+
+  dispatch({
+    type: UPDATE_LINK,
+    payload: { data: response.data }
+  });
+};
+
+export const deleteNote = noteId => async (dispatch, getState) => {
+  await backend.delete(`/notes/${noteId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getState().auth.user.loggedIn
+        ? `Bearer ${getState().auth.tokens.access}`
+        : ""
+    }
+  });
+
+  dispatch({
+    type: DELETE_NOTE
+  });
+};
+
+export const deleteLink = linkId => async (dispatch, getState) => {
+  await backend.delete(`/links/${linkId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getState().auth.user.loggedIn
+        ? `Bearer ${getState().auth.tokens.access}`
+        : ""
+    }
+  });
+
+  dispatch({
+    type: DELETE_LINK
+  });
+};
+
+export const getLink = id => async (dispatch, getState) => {
+  const response = await backend.get(`/links/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getState().auth.user.loggedIn
+        ? `Bearer ${getState().auth.tokens.access}`
+        : ""
+    }
+  });
+
+  dispatch({
+    type: GET_LINK_DETAILS,
+    payload: { data: response.data }
+  });
 };

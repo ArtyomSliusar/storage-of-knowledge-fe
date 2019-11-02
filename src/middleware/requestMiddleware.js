@@ -5,8 +5,12 @@ import { getTokenPayload } from "../utils/otherUtils";
 import { LOGOUT, REFRESH_TOKENS } from "../constants";
 import history from "../history";
 
-async function refreshTokens(refreshToken) {
-  return await backend.post("/refresh/", {
+let refreshInProgress = false;
+let callbackQueue = [];
+
+function refreshTokens(refreshToken) {
+  refreshInProgress = true;
+  return backend.post("/refresh/", {
     refresh: refreshToken
   });
 }
@@ -16,7 +20,6 @@ async function refreshTokens(refreshToken) {
  */
 export function requestMiddleware() {
   return ({ dispatch, getState }) => next => action => {
-    // TODO: improve check
     if (typeof action !== "function") {
       return next(action);
     }
@@ -30,16 +33,33 @@ export function requestMiddleware() {
     const accessToken = getTokenPayload(tokens.access);
 
     if (tokens.refresh && Date.now() / 1000 > accessToken["exp"]) {
-      refreshTokens(tokens.refresh)
-        .then(response => {
-          dispatch({ type: REFRESH_TOKENS, payload: { data: response.data } });
-          return action(dispatch, getState);
-        })
-        .catch(error => {
-          console.log(error);
-          dispatch({ type: LOGOUT });
-          history.push("/login");
-        });
+      if (refreshInProgress === true) {
+        // FIXME: potential bug may be here, when caller expects promise to be
+        // returned, but we return undefined instead
+        callbackQueue.push(action);
+      } else {
+        return refreshTokens(tokens.refresh)
+          .then(response => {
+            dispatch({
+              type: REFRESH_TOKENS,
+              payload: { data: response.data }
+            });
+            refreshInProgress = false;
+            setTimeout(function() {
+              while (callbackQueue.length > 0) {
+                const action = callbackQueue.shift();
+                action(dispatch, getState);
+              }
+            }, 0);
+            return action(dispatch, getState);
+          })
+          .catch(error => {
+            console.log(error);
+            dispatch({ type: LOGOUT });
+            refreshInProgress = false;
+            history.push("/login");
+          });
+      }
     } else {
       return action(dispatch, getState);
     }

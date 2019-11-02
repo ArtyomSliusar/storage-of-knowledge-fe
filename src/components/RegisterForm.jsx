@@ -3,7 +3,8 @@ import { Button } from "@material-ui/core";
 import { Field, reduxForm, SubmissionError } from "redux-form";
 import { renderTextField } from "../utils/formUtils";
 import { connect } from "react-redux";
-import { register } from "../actions";
+import { openSnackbar, register } from "../actions";
+import { ERROR } from "../constants";
 
 class RegisterForm extends React.Component {
   onSubmit = ({ username, email, password }) => {
@@ -26,7 +27,7 @@ class RegisterForm extends React.Component {
             });
           }
         }
-        alert(error);
+        this.props.openSnackbar(error.toString(), ERROR);
       });
   };
 
@@ -112,5 +113,5 @@ const formWrapped = reduxForm({
 
 export default connect(
   null,
-  { register }
+  { register, openSnackbar }
 )(formWrapped);

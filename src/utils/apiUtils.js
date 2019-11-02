@@ -1,5 +1,4 @@
 import backend from "../apis/backend";
-import { LINKS, NOTES } from "../constants";
 
 /**
  * Requests with no storage update AND no authentication.

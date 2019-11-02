@@ -4,11 +4,13 @@ import authReducer from "./authReducer";
 import filtersReducer from "./filtersReducer";
 import notesReducer from "./notesReducer";
 import linksReducer from "./linksReducer";
+import snackbarReducer from "./snackbarReducer";
 
 export const reducers = combineReducers({
   auth: authReducer,
   form: formReducer,
   filters: filtersReducer,
   notes: notesReducer,
-  links: linksReducer
+  links: linksReducer,
+  snackbar: snackbarReducer
 });

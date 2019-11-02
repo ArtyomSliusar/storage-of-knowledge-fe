@@ -7,11 +7,12 @@ import { connect } from "react-redux";
 import SearchBar from "./SearchBar";
 import MobileResults from "./mobile/SearchResults";
 import WebResults from "./web/SearchResults";
-import AdapterLink from "./AdapterLink";
 import Modal from "./Modal";
 import AvailableFilters from "./AvailableFilters";
 import { LINKS, NOTES } from "../constants";
 import { getLinks, getNotes } from "../actions";
+import Badge from "@material-ui/core/Badge";
+import history from "../history";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -90,6 +91,14 @@ function Home({ filters, loggedIn, getNotes, getLinks }) {
     setSearchQuery("");
   };
 
+  const handleFiltersClick = () => {
+    if (isMobile) {
+      history.push("/filters");
+    } else {
+      setModalOpen(true);
+    }
+  };
+
   return (
     <div className={classes.root}>
       <div className={classes.search}>
@@ -101,26 +110,16 @@ function Home({ filters, loggedIn, getNotes, getLinks }) {
       </div>
 
       <div className={classes.filter}>
-        {isMobile ? (
+        <Badge color="secondary" badgeContent={filtersCount}>
           <Button
             variant="contained"
             color="primary"
             size="medium"
-            component={AdapterLink}
-            to="/filters"
+            onClick={handleFiltersClick}
           >
-            {`Filters ${filtersCount ? "(" + filtersCount + ")" : ""}`}
+            Filters
           </Button>
-        ) : (
-          <Button
-            variant="contained"
-            color="primary"
-            size="medium"
-            onClick={() => setModalOpen(true)}
-          >
-            {`Filters ${filtersCount ? "(" + filtersCount + ")" : ""}`}
-          </Button>
-        )}
+        </Badge>
       </div>
 
       <div className={classes.results}>

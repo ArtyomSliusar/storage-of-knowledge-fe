@@ -1,4 +1,11 @@
-import { GET_LINKS, GET_MORE_LINKS } from "../constants";
+import {
+  GET_LINKS,
+  GET_MORE_LINKS,
+  GET_LINK_DETAILS,
+  DELETE_LINK,
+  UPDATE_LINK
+} from "../constants";
+import * as _ from "lodash";
 
 export default (state = {}, action) => {
   switch (action.type) {
@@ -8,6 +15,20 @@ export default (state = {}, action) => {
       return {
         ...action.payload.data,
         results: [...state.results, ...action.payload.data.results]
+      };
+    case GET_LINK_DETAILS:
+      return {
+        ...state,
+        linkDetails: action.payload.data
+      };
+    case UPDATE_LINK:
+      return {
+        ...state,
+        linkDetails: action.payload.data
+      };
+    case DELETE_LINK:
+      return {
+        ..._.omit(state, "linkDetails")
       };
     default:
       return state;

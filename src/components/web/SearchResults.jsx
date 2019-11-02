@@ -73,9 +73,8 @@ function SearchResults({
 }) {
   const classes = useStyles();
 
-  const handleRowClick = (event, name) => {
-    // TODO: redirect to item's page
-    console.log(`open item ${name}`);
+  const handleRowClick = (event, id) => {
+    history.push(`${filters.type}/${id}`);
   };
 
   const handleSortChange = (event, property) => {

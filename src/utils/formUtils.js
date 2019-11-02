@@ -1,5 +1,13 @@
 import TextField from "@material-ui/core/TextField";
 import React from "react";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import { Switch } from "@material-ui/core";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import Chip from "@material-ui/core/Chip";
+import SimpleMDE from "react-simplemde-editor";
 
 const renderTextField = ({
   label,
@@ -17,4 +25,81 @@ const renderTextField = ({
   />
 );
 
-export { renderTextField };
+const renderSimpleMDE = ({ input, classes, meta: { error }, ...custom }) => (
+  <div>
+    <SimpleMDE
+      value={input.value}
+      onChange={input.onChange}
+      className={classes.simpleMde}
+      {...custom}
+    />
+    <div style={{ color: "red" }}>{error}</div>
+  </div>
+);
+
+const renderSwitchField = ({ input, label, color }) => (
+  <FormControlLabel
+    control={
+      <Switch
+        checked={input.value ? true : false}
+        onChange={input.onChange}
+        color={color}
+      />
+    }
+    label={label}
+  />
+);
+
+const renderFromHelper = ({ touched, error }) => {
+  if (!(touched && error)) {
+    return;
+  } else {
+    return <FormHelperText>{touched && error}</FormHelperText>;
+  }
+};
+
+const renderSelectField = ({
+  input,
+  label,
+  classes,
+  meta: { touched, error },
+  children,
+  ...custom
+}) => {
+  return (
+    <FormControl error={error && touched}>
+      <InputLabel htmlFor={`${label}-select`}>{label}</InputLabel>
+      <Select
+        multiple
+        {...input}
+        {...custom}
+        renderValue={selected => (
+          <div className={classes.chips}>
+            {selected.map(value => (
+              <Chip key={value} label={value} className={classes.chip} />
+            ))}
+          </div>
+        )}
+        MenuProps={{
+          PaperProps: {
+            className: classes.menuProps
+          }
+        }}
+        inputProps={{
+          name: label,
+          id: `${label}-select`
+        }}
+      >
+        {children}
+      </Select>
+      {renderFromHelper({ touched, error })}
+    </FormControl>
+  );
+};
+
+export {
+  renderTextField,
+  renderSwitchField,
+  renderSelectField,
+  renderSimpleMDE
+};

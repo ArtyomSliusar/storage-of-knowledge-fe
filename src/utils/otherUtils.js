@@ -1,4 +1,4 @@
-import { NOTES } from "../constants";
+import { INFO, NOTES } from "../constants";
 
 function setLocalStorageState(state) {
   try {
@@ -47,7 +47,12 @@ function getInitialState() {
       type: NOTES
     },
     notes: [],
-    links: []
+    links: [],
+    snackbar: {
+      open: false,
+      message: "",
+      type: INFO
+    }
   };
   const localStorageState = getLocalStorageState();
   if (localStorageState.auth && localStorageState.auth.tokens) {

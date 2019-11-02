@@ -5,11 +5,18 @@ import "bootstrap/dist/css/bootstrap.css";
 import Navbar from "./NavBar";
 import Home from "./Home";
 import MobileLoginRegister from "./mobile/LoginRegister";
+import MobileNoteDelete from "./mobile/NoteDelete";
+import MobileLinkDelete from "./mobile/LinkDelete";
 import history from "../history";
 import MobileContact from "./mobile/Contact";
 import Logout from "./Logout";
 import { makeStyles } from "@material-ui/core";
 import MobileFilters from "./mobile/Filters";
+import NoteShow from "./NoteShow";
+import NoteEdit from "./NoteEdit";
+import CustomSnackbar from "./CustomSnackbar";
+import LinkShow from "./LinkShow";
+import LinkEdit from "./LinkEdit";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -38,6 +45,7 @@ export default function App() {
     <Router history={history}>
       <div className={classes.wrapper}>
         <Navbar className={classes.header} />
+        <CustomSnackbar />
 
         <div className={classes.main}>
           <Switch>
@@ -55,6 +63,22 @@ export default function App() {
             <Route exact path="/logout" component={Logout} />
             <Route exact path="/contact" component={MobileContact} />
             <Route exact path="/filters" component={MobileFilters} />
+            <Route exact path="/notes/:id" component={NoteShow} />
+            {/*<Route exact path="/notes/new" component={NoteCreate} />*/}
+            <Route exact path="/notes/edit/:id" component={NoteEdit} />
+            <Route
+              exact
+              path="/notes/delete/:id"
+              component={MobileNoteDelete}
+            />
+            {/*<Route exact path="/links/new" component={} />*/}
+            <Route exact path="/links/:id" component={LinkShow} />
+            <Route exact path="/links/edit/:id" component={LinkEdit} />
+            <Route
+              exact
+              path="/links/delete/:id"
+              component={MobileLinkDelete}
+            />
           </Switch>
         </div>
       </div>

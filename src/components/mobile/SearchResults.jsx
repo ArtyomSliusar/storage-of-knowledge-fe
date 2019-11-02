@@ -15,6 +15,7 @@ import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 
 import { getMoreNotes, getMoreLinks } from "../../actions";
 import { LINKS, NOTES } from "../../constants";
+import history from "../../history";
 
 const useStyles = makeStyles(theme => ({
   loader: {
@@ -32,6 +33,10 @@ const useStyles = makeStyles(theme => ({
 function SearchResults({ getMoreNotes, getMoreLinks, notes, links, filters }) {
   const classes = useStyles();
 
+  const handleItemClick = (event, id) => {
+    history.push(`${filters.type}/${id}`);
+  };
+
   const renderNotes = () => {
     if (notes.results) {
       return notes.results.map(note => (
@@ -40,6 +45,7 @@ function SearchResults({ getMoreNotes, getMoreLinks, notes, links, filters }) {
             <NoteIcon fontSize="small" />
           </ListItemAvatar>
           <ListItemText
+            onClick={event => handleItemClick(event, note.id)}
             primary={note.title}
             secondary={`${note.user} | ${note.date_modified}`}
           />
@@ -64,6 +70,7 @@ function SearchResults({ getMoreNotes, getMoreLinks, notes, links, filters }) {
             <LinkIcon fontSize="small" />
           </ListItemAvatar>
           <ListItemText
+            onClick={event => handleItemClick(event, link.id)}
             primary={link.title}
             secondary={`${link.user} | ${link.date_modified}`}
           />

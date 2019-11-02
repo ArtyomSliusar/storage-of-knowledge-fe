@@ -2,8 +2,9 @@ import React from "react";
 import { connect } from "react-redux";
 import { Button } from "@material-ui/core";
 import { Field, reduxForm, SubmissionError } from "redux-form";
-import { login } from "../actions";
+import { login, openSnackbar } from "../actions";
 import { renderTextField } from "../utils/formUtils";
+import { ERROR } from "../constants";
 
 class LoginForm extends React.Component {
   onSubmit = ({ username, password }) => {
@@ -26,7 +27,7 @@ class LoginForm extends React.Component {
             });
           }
         }
-        alert(error);
+        this.props.openSnackbar(error.toString(), ERROR);
       });
   };
 
@@ -96,5 +97,5 @@ const formWrapped = reduxForm({
 
 export default connect(
   null,
-  { login }
+  { login, openSnackbar }
 )(formWrapped);

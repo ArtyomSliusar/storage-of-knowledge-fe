@@ -3,6 +3,9 @@ import { Button } from "@material-ui/core";
 import { Field, reduxForm, SubmissionError } from "redux-form";
 import { renderTextField } from "../utils/formUtils";
 import { contact } from "../utils/apiUtils";
+import { connect } from "react-redux";
+import { openSnackbar } from "../actions";
+import { ERROR } from "../constants";
 
 class ContactForm extends React.Component {
   onSubmit = ({ name, email, message }) => {
@@ -24,7 +27,7 @@ class ContactForm extends React.Component {
             });
           }
         }
-        alert(error);
+        this.props.openSnackbar(error.toString(), ERROR);
       });
   };
 
@@ -104,7 +107,12 @@ const validate = values => {
   return errors;
 };
 
-export default reduxForm({
+const formWrapped = reduxForm({
   form: "contactForm",
   validate
 })(ContactForm);
+
+export default connect(
+  null,
+  { openSnackbar }
+)(formWrapped);

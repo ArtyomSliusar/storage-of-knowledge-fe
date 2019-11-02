@@ -8,7 +8,8 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
 import { getSubjects } from "../utils/apiUtils";
-import { applyFilters } from "../actions";
+import { applyFilters, openSnackbar } from "../actions";
+import { ERROR, LINKS, NOTES } from "../constants";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -37,7 +38,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const itemTypes = ["Note", "Link"];
+const itemTypes = [NOTES, LINKS];
 
 function AvailableFilters(props) {
   const classes = useStyles();
@@ -61,7 +62,7 @@ function AvailableFilters(props) {
 
   const resetFilters = () => {
     setSelectedSubjects([]);
-    setSelectedType("Note");
+    setSelectedType(NOTES);
   };
 
   const toggleSubject = subject => {
@@ -83,7 +84,7 @@ function AvailableFilters(props) {
         setSubjects(subjectsNames);
       })
       .catch(error => {
-        alert(error);
+        props.openSnackbar(error.toString(), ERROR);
       });
   }, []);
 
@@ -157,5 +158,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { applyFilters }
+  { applyFilters, openSnackbar }
 )(AvailableFilters);

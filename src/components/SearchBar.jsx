@@ -9,6 +9,8 @@ import Autosuggest from "react-autosuggest";
 import TextField from "@material-ui/core/TextField";
 import { getSuggestions } from "../utils/apiUtils";
 import MenuItem from "@material-ui/core/MenuItem";
+import { ERROR } from "../constants";
+import { openSnackbar } from "../actions";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -86,7 +88,8 @@ function SearchBar({
   searchQuery,
   setSearchQuery,
   handleSearchRequest,
-  filters
+  filters,
+  openSnackbar
 }) {
   const classes = useStyles();
   const [suggestions, setSuggestions] = React.useState([]);
@@ -108,7 +111,7 @@ function SearchBar({
           setSuggestions(response.data.suggestions);
         })
         .catch(error => {
-          alert(error);
+          openSnackbar(error.toString(), ERROR);
         });
     }
   };
@@ -168,5 +171,5 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
   mapStateToProps,
-  {}
+  { openSnackbar }
 )(SearchBar);
