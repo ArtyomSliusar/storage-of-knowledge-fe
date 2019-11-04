@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import * as _ from "lodash";
 import { connect } from "react-redux";
 import { Button, makeStyles } from "@material-ui/core";
+import SaveIcon from "@material-ui/icons/Save";
 import { Field, reduxForm, SubmissionError } from "redux-form";
 import MenuItem from "@material-ui/core/MenuItem";
 
@@ -172,7 +173,13 @@ function ItemForm({
       <div style={{ color: "red" }}>{error}</div>
 
       <div className={classes.actions}>
-        <Button type="submit" variant="contained" color="primary" size="medium">
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          size="medium"
+          startIcon={<SaveIcon />}
+        >
           Save
         </Button>
         <span className={classes.separator} />
