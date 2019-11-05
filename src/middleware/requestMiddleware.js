@@ -54,7 +54,7 @@ export function requestMiddleware() {
             return action(dispatch, getState);
           })
           .catch(error => {
-            console.log(error);
+            console.error(error);
             dispatch({ type: LOGOUT });
             refreshInProgress = false;
             history.push("/login");

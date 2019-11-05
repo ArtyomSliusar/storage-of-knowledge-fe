@@ -1,4 +1,5 @@
-import { INFO, NOTES } from "../constants";
+import { INFO, LINKS, NOTES } from "../constants";
+import store from "../store";
 
 function setLocalStorageState(state) {
   try {
@@ -64,4 +65,20 @@ function getInitialState() {
   return initialState;
 }
 
-export { setLocalStorageState, getInitialState, getTokenPayload };
+const getFilterTypeSingular = () => {
+  const type = store.getState().filters.type;
+  if (type === NOTES) {
+    return "note";
+  } else if (type === LINKS) {
+    return " link";
+  } else {
+    return null;
+  }
+};
+
+export {
+  setLocalStorageState,
+  getInitialState,
+  getTokenPayload,
+  getFilterTypeSingular
+};

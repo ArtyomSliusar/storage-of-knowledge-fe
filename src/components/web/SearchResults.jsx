@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
-import TableFooter from "@material-ui/core/TableFooter";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
@@ -38,8 +37,18 @@ const headCells = [
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: "100%",
-    marginTop: theme.spacing(3)
+    display: "flex",
+    height: "100%",
+    justifyContent: "center"
+  },
+  wrapper: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column"
+  },
+  tableWrapper: {
+    overflowY: "auto",
+    flex: 2
   },
   table: {
     minWidth: 500,
@@ -47,9 +56,11 @@ const useStyles = makeStyles(theme => ({
       cursor: "pointer"
     }
   },
-  tableWrapper: {
-    overflowX: "auto",
-    textAlign: "center"
+  tableFooter: {
+    flex: 0.15,
+    "& > *": {
+      height: "100%"
+    }
   },
   itemIcon: {
     marginRight: theme.spacing(1)
@@ -116,66 +127,66 @@ function SearchResults({
     }
     if (items.results) {
       return (
-        <Table className={classes.table} aria-label="results table">
-          <CustomTableHead
-            classes={classes}
-            order={order}
-            orderBy={orderBy}
-            onRequestSort={handleSortChange}
-            headCells={headCells}
-          />
-          <TableBody>
-            {items.results
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map(item => (
-                <TableRow
-                  key={item.id}
-                  hover
-                  onClick={event => handleRowClick(event, item.id)}
-                >
-                  <TableCell align="left">
-                    {icon}
-                    {item.title}
-                  </TableCell>
-                  <TableCell align="right">{item.subjects}</TableCell>
-                  <TableCell align="right">{item.user}</TableCell>
-                  <TableCell align="right">{item.likes_count}</TableCell>
-                  <TableCell align="right">{item.date_modified}</TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[15, 25, 50]}
-                colSpan={headCells.length}
-                count={items.count || 0}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                SelectProps={{
-                  inputProps: { "aria-label": "rows per page" },
-                  native: true
-                }}
-                onChangePage={handlePageChange}
-                onChangeRowsPerPage={handleRowsPerPageChange}
-                ActionsComponent={TablePaginationActions}
+        <div className={classes.wrapper}>
+          <div className={classes.tableWrapper}>
+            <Table
+              stickyHeader
+              className={classes.table}
+              aria-label="results table"
+            >
+              <CustomTableHead
+                classes={classes}
+                order={order}
+                orderBy={orderBy}
+                onRequestSort={handleSortChange}
+                headCells={headCells}
               />
-            </TableRow>
-          </TableFooter>
-        </Table>
+              <TableBody>
+                {items.results
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map(item => (
+                    <TableRow
+                      key={item.id}
+                      hover
+                      onClick={event => handleRowClick(event, item.id)}
+                    >
+                      <TableCell align="left">
+                        {icon}
+                        {item.title}
+                      </TableCell>
+                      <TableCell align="right">{item.subjects}</TableCell>
+                      <TableCell align="right">{item.user}</TableCell>
+                      <TableCell align="right">{item.likes_count}</TableCell>
+                      <TableCell align="right">{item.date_modified}</TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </div>
+          <TablePagination
+            className={classes.tableFooter}
+            component="div"
+            rowsPerPageOptions={[15, 25, 50]}
+            colSpan={headCells.length}
+            count={items.count || 0}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            SelectProps={{
+              inputProps: { "aria-label": "rows per page" },
+              native: true
+            }}
+            onChangePage={handlePageChange}
+            onChangeRowsPerPage={handleRowsPerPageChange}
+            ActionsComponent={TablePaginationActions}
+          />
+        </div>
       );
     } else {
-      return null;
+      return <CircularProgress />;
     }
   };
 
-  return (
-    <Paper className={classes.root}>
-      <div className={classes.tableWrapper}>
-        {renderTable() || <CircularProgress />}
-      </div>
-    </Paper>
-  );
+  return <Paper className={classes.root}>{renderTable()}</Paper>;
 }
 
 const mapStateToProps = (state, ownProps) => {

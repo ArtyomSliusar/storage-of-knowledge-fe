@@ -3,26 +3,41 @@ import { makeStyles, useTheme } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery/useMediaQuery";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
+import Badge from "@material-ui/core/Badge";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
 
+import history from "../history";
+import { getLinks, getNotes } from "../actions";
 import SearchBar from "./SearchBar";
 import MobileResults from "./mobile/SearchResults";
 import WebResults from "./web/SearchResults";
 import Modal from "./Modal";
 import AvailableFilters from "./AvailableFilters";
 import { LINKS, NOTES } from "../constants";
-import { getLinks, getNotes } from "../actions";
-import Badge from "@material-ui/core/Badge";
-import history from "../history";
+import { getFilterTypeSingular } from "../utils/otherUtils";
 
 const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
     flexFlow: "row wrap",
-    justifyContent: "center"
+    justifyContent: "center",
+    height: "100%"
+  },
+  controlPanel: {
+    display: "flex",
+    flexFlow: "row wrap",
+    height: "20%",
+    width: "100%",
+    justifyContent: "center",
+    [theme.breakpoints.up("sm")]: {
+      height: "8%"
+    }
   },
   search: {
     [theme.breakpoints.up("sm")]: {
       marginRight: theme.spacing(3),
+      marginLeft: "auto",
       width: 400
     },
     [theme.breakpoints.down("xs")]: {
@@ -30,12 +45,23 @@ const useStyles = makeStyles(theme => ({
     }
   },
   filter: {
-    [theme.breakpoints.down("xs")]: {
-      margin: theme.spacing(2, 0)
+    [theme.breakpoints.up("sm")]: {
+      marginRight: "auto"
     }
   },
+  mobileAdd: {
+    position: "fixed",
+    zIndex: 1,
+    bottom: theme.spacing(2),
+    right: theme.spacing(2)
+  },
   results: {
-    flex: "1 0 100%"
+    flex: "1 0 auto",
+    width: "100%",
+    height: "80%",
+    [theme.breakpoints.up("sm")]: {
+      height: "92%"
+    }
   }
 }));
 
@@ -99,27 +125,66 @@ function Home({ filters, loggedIn, getNotes, getLinks }) {
     }
   };
 
-  return (
-    <div className={classes.root}>
-      <div className={classes.search}>
-        <SearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          handleSearchRequest={handleSearchRequest}
-        />
-      </div>
+  const handleAddClick = () => {
+    history.push(`${filters.type}/new`);
+  };
 
-      <div className={classes.filter}>
-        <Badge color="secondary" badgeContent={filtersCount}>
+  const renderAddItem = () => {
+    if (loggedIn && isMobile) {
+      return (
+        <Fab
+          aria-label="Add"
+          className={classes.mobileAdd}
+          color="primary"
+          onClick={handleAddClick}
+        >
+          <AddIcon />
+        </Fab>
+      );
+    } else if (loggedIn && !isMobile) {
+      return (
+        <div>
           <Button
+            startIcon={<AddIcon />}
+            size="medium"
             variant="contained"
             color="primary"
-            size="medium"
-            onClick={handleFiltersClick}
+            onClick={handleAddClick}
           >
-            Filters
+            {getFilterTypeSingular()}
           </Button>
-        </Badge>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
+
+  return (
+    <div className={classes.root}>
+      <div className={classes.controlPanel}>
+        <div className={classes.search}>
+          <SearchBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            handleSearchRequest={handleSearchRequest}
+          />
+        </div>
+
+        <div className={classes.filter}>
+          <Badge color="secondary" badgeContent={filtersCount}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="medium"
+              onClick={handleFiltersClick}
+            >
+              Filters
+            </Button>
+          </Badge>
+        </div>
+
+        {renderAddItem()}
       </div>
 
       <div className={classes.results}>

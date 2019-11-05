@@ -15,7 +15,8 @@ import { openSnackbar } from "../actions";
 const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
-    justifyContent: "center"
+    justifyContent: "center",
+    alignItems: "center"
   },
   container: {
     flex: 1,
@@ -23,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
   suggestionsContainerOpen: {
     position: "absolute",
-    zIndex: 1,
+    zIndex: 3,
     marginTop: theme.spacing(1),
     left: 0,
     right: 0
@@ -39,10 +40,7 @@ const useStyles = makeStyles(theme => ({
     listStyleType: "none"
   },
   input: {
-    padding: theme.spacing(1),
-    "& input": {
-      marginLeft: theme.spacing(1)
-    }
+    padding: theme.spacing(1)
   },
   iconButton: {
     padding: theme.spacing(1)

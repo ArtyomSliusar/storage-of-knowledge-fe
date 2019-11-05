@@ -31,3 +31,5 @@ export const CLOSE_SNACKBAR = "CLOSE_SNACKBAR";
 export const DELETE_NOTE = "DELETE_NOTE";
 export const DELETE_LINK = "DELETE_LINK";
 export const GET_LINK_DETAILS = "GET_LINK_DETAILS";
+export const ADD_NOTE = "ADD_NOTE";
+export const ADD_LINK = "ADD_LINK";

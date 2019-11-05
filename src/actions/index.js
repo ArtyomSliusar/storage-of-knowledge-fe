@@ -16,7 +16,9 @@ import {
   DELETE_NOTE,
   GET_LINK_DETAILS,
   DELETE_LINK,
-  UPDATE_LINK
+  UPDATE_LINK,
+  ADD_NOTE,
+  ADD_LINK
 } from "../constants";
 import history from "../history";
 import axios from "axios";
@@ -56,7 +58,7 @@ export const logout = () => async (dispatch, getState) => {
       }
     )
     .catch(error => {
-      console.log(error);
+      console.error(error);
     });
 
   dispatch({
@@ -124,7 +126,7 @@ export const getNotes = ({
   filters,
   search,
   orderBy,
-  limit = 15,
+  limit,
   order = "asc"
 } = {}) => async (dispatch, getState) => {
   const limitQuery = `limit=${limit}`;
@@ -180,7 +182,7 @@ export const getLinks = ({
   filters,
   search,
   orderBy,
-  limit = 15,
+  limit,
   order = "asc"
 } = {}) => async (dispatch, getState) => {
   const limitQuery = `limit=${limit}`;
@@ -344,4 +346,60 @@ export const getLink = id => async (dispatch, getState) => {
     type: GET_LINK_DETAILS,
     payload: { data: response.data }
   });
+};
+
+export const createNote = noteData => async (dispatch, getState) => {
+  const response = await backend.post(
+    `/notes/`,
+    {
+      title: noteData.title,
+      subjects: noteData.subjects,
+      private: noteData.private,
+      user: getState().auth.user.username,
+      body: noteData.body
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getState().auth.user.loggedIn
+          ? `Bearer ${getState().auth.tokens.access}`
+          : ""
+      }
+    }
+  );
+
+  dispatch({
+    type: ADD_NOTE,
+    payload: { data: response.data }
+  });
+
+  return response;
+};
+
+export const createLink = linkData => async (dispatch, getState) => {
+  const response = await backend.post(
+    `/links/`,
+    {
+      title: linkData.title,
+      subjects: linkData.subjects,
+      private: linkData.private,
+      user: getState().auth.user.username,
+      link: linkData.link
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getState().auth.user.loggedIn
+          ? `Bearer ${getState().auth.tokens.access}`
+          : ""
+      }
+    }
+  );
+
+  dispatch({
+    type: ADD_LINK,
+    payload: { data: response.data }
+  });
+
+  return response;
 };

@@ -33,6 +33,9 @@ const useStyles = makeStyles(theme => ({
   separator: {
     flexGrow: 1
   },
+  selectForm: {
+    minWidth: 90
+  },
   chips: {
     display: "flex",
     flexWrap: "wrap"
@@ -65,9 +68,9 @@ function ItemForm({
   openSnackbar,
   initialValues
 }) {
-  const itemType = initialValues.itemType;
   const classes = useStyles();
   const [availableSubjects, setAvailableSubjects] = useState([]);
+  const itemType = initialValues.itemType;
 
   useEffect(() => {
     getSubjects()
@@ -82,8 +85,8 @@ function ItemForm({
 
   const submit = formValues => {
     return onSubmit(formValues)
-      .then(() => {
-        onFormSuccess();
+      .then(response => {
+        onFormSuccess(response);
       })
       .catch(error => {
         if (error.response) {
@@ -107,7 +110,7 @@ function ItemForm({
     if (itemType === NOTES) {
       return (
         <Field
-          name={"body"}
+          name="body"
           classes={classes}
           component={renderSimpleMDE}
           margin="normal"

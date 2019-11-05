@@ -67,7 +67,7 @@ const renderSelectField = ({
   ...custom
 }) => {
   return (
-    <FormControl error={error && touched}>
+    <FormControl error={error && touched} className={classes.selectForm}>
       <InputLabel htmlFor={`${label}-select`}>{label}</InputLabel>
       <Select
         multiple
