@@ -2,14 +2,25 @@ import React from "react";
 import { connect } from "react-redux";
 import "easymde/dist/easymde.min.css";
 
-import { getNote } from "../actions";
+import { addNoteLike, deleteNoteLike, getNote, getNoteLikes } from "../actions";
 import { NOTES } from "../constants";
 import ItemShow from "./ItemShow";
 
-function NoteShow({ getNote, noteId, noteDetails, user }) {
+function NoteShow({
+  getNote,
+  getNoteLikes,
+  addNoteLike,
+  deleteNoteLike,
+  noteId,
+  noteDetails,
+  user
+}) {
   return (
     <ItemShow
       getItem={getNote}
+      getItemLikes={getNoteLikes}
+      likeItem={addNoteLike}
+      dislikeItem={deleteNoteLike}
       itemId={noteId}
       itemDetails={noteDetails}
       itemType={NOTES}
@@ -29,5 +40,5 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
   mapStateToProps,
-  { getNote }
+  { getNote, getNoteLikes, addNoteLike, deleteNoteLike }
 )(NoteShow);

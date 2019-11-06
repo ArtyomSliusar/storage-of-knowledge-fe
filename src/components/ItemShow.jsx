@@ -8,6 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import PersonSharpIcon from "@material-ui/icons/PersonSharp";
 import LockIcon from "@material-ui/icons/Lock";
 import DeleteIcon from "@material-ui/icons/Delete";
+import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
 import EditIcon from "@material-ui/icons/Edit";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import Avatar from "@material-ui/core/Avatar";
@@ -64,6 +65,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function ItemShow({
   getItem,
+  getItemLikes,
+  likeItem,
+  dislikeItem,
   itemId,
   itemType,
   itemDetails,
@@ -72,6 +76,7 @@ export default function ItemShow({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [likeId, setLikeId] = React.useState(null);
   const classes = useStyles();
 
   const handleModalClose = () => {
@@ -80,6 +85,12 @@ export default function ItemShow({
 
   useEffect(() => {
     getItem(itemId);
+    getItemLikes({ id: itemId, userOnly: true }).then(response => {
+      if (response.data.length > 0) {
+        const userLike = response.data[0]; // take first like (theoretically there should be only one)
+        setLikeId(userLike.id);
+      }
+    });
   }, []);
 
   const getIntance = instance => {
@@ -107,6 +118,18 @@ export default function ItemShow({
     }
   };
 
+  const toggleLike = () => {
+    if (likeId === null) {
+      likeItem(itemId).then(response => {
+        setLikeId(response.data.id);
+      });
+    } else {
+      dislikeItem({ id: itemId, likeId: likeId }).then(() => {
+        setLikeId(null);
+      });
+    }
+  };
+
   const renderActions = () => {
     if (user.loggedIn && user.username === itemDetails.user) {
       return (
@@ -130,6 +153,20 @@ export default function ItemShow({
             onClick={renderDeleteConfirmation}
           >
             Delete
+          </Button>
+        </div>
+      );
+    } else if (user.loggedIn && user.username !== itemDetails.user) {
+      return (
+        <div className={classes.actions}>
+          <Button
+            variant={likeId !== null ? "contained" : "outlined"}
+            color="primary"
+            size="medium"
+            startIcon={<ThumbUpAltIcon />}
+            onClick={toggleLike}
+          >
+            Like
           </Button>
         </div>
       );

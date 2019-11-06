@@ -2,14 +2,25 @@ import React from "react";
 import { connect } from "react-redux";
 import "easymde/dist/easymde.min.css";
 
-import { getLink } from "../actions";
+import { getLinkLikes, addLinkLike, getLink, deleteLinkLike } from "../actions";
 import { LINKS } from "../constants";
 import ItemShow from "./ItemShow";
 
-function LinkShow({ getLink, linkId, linkDetails, user }) {
+function LinkShow({
+  getLink,
+  getLinkLikes,
+  addLinkLike,
+  deleteLinkLike,
+  linkId,
+  linkDetails,
+  user
+}) {
   return (
     <ItemShow
       getItem={getLink}
+      getItemLikes={getLinkLikes}
+      likeItem={addLinkLike}
+      dislikeItem={deleteLinkLike}
       itemId={linkId}
       itemDetails={linkDetails}
       itemType={LINKS}
@@ -29,5 +40,5 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
   mapStateToProps,
-  { getLink }
+  { getLink, getLinkLikes, addLinkLike, deleteLinkLike }
 )(LinkShow);

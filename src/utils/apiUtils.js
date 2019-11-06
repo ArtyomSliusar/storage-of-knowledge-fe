@@ -29,11 +29,14 @@ async function getSubjects() {
 }
 
 async function getSuggestions(filters, query) {
-  return await backend.get(`/${filters.type}/suggestions/?query=${query}`, {
-    headers: {
-      "Content-Type": "application/json"
+  return await backend.get(
+    `/suggestions/?query=${query}&index=${filters.type}`,
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
     }
-  });
+  );
 }
 
 export { contact, getSubjects, getSuggestions };

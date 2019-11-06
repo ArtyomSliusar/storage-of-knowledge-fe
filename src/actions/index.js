@@ -18,10 +18,18 @@ import {
   DELETE_LINK,
   UPDATE_LINK,
   ADD_NOTE,
-  ADD_LINK
+  ADD_LINK,
+  GET_NOTE_LIKES,
+  ADD_NOTE_LIKE,
+  DELETE_NOTE_LIKE,
+  GET_LINK_LIKES,
+  ADD_LINK_LIKE,
+  DELETE_LINK_LIKE
 } from "../constants";
 import history from "../history";
 import axios from "axios";
+
+// TODO: DRY
 
 export const login = (username, password) => async dispatch => {
   const response = await backend.post(
@@ -402,4 +410,130 @@ export const createLink = linkData => async (dispatch, getState) => {
   });
 
   return response;
+};
+
+export const getNoteLikes = ({ id, userOnly = false } = {}) => async (
+  dispatch,
+  getState
+) => {
+  const userFilter = userOnly ? `?user=${getState().auth.user.id}` : "";
+
+  const response = await backend.get(`/notes/${id}/likes/${userFilter}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getState().auth.user.loggedIn
+        ? `Bearer ${getState().auth.tokens.access}`
+        : ""
+    }
+  });
+
+  dispatch({
+    type: GET_NOTE_LIKES,
+    payload: { data: response.data }
+  });
+
+  return response;
+};
+
+export const addNoteLike = id => async (dispatch, getState) => {
+  const response = await backend.post(
+    `/notes/${id}/likes/`,
+    {},
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getState().auth.user.loggedIn
+          ? `Bearer ${getState().auth.tokens.access}`
+          : ""
+      }
+    }
+  );
+
+  dispatch({
+    type: ADD_NOTE_LIKE,
+    payload: { data: response.data }
+  });
+
+  return response;
+};
+
+export const deleteNoteLike = ({ id, likeId }) => async (
+  dispatch,
+  getState
+) => {
+  await backend.delete(`/notes/${id}/likes/${likeId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getState().auth.user.loggedIn
+        ? `Bearer ${getState().auth.tokens.access}`
+        : ""
+    }
+  });
+
+  dispatch({
+    type: DELETE_NOTE_LIKE
+  });
+};
+
+export const getLinkLikes = ({ id, userOnly = false } = {}) => async (
+  dispatch,
+  getState
+) => {
+  const userFilter = userOnly ? `?user=${getState().auth.user.id}` : "";
+
+  const response = await backend.get(`/links/${id}/likes/${userFilter}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getState().auth.user.loggedIn
+        ? `Bearer ${getState().auth.tokens.access}`
+        : ""
+    }
+  });
+
+  dispatch({
+    type: GET_LINK_LIKES,
+    payload: { data: response.data }
+  });
+
+  return response;
+};
+
+export const addLinkLike = id => async (dispatch, getState) => {
+  const response = await backend.post(
+    `/links/${id}/likes/`,
+    {},
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getState().auth.user.loggedIn
+          ? `Bearer ${getState().auth.tokens.access}`
+          : ""
+      }
+    }
+  );
+
+  dispatch({
+    type: ADD_LINK_LIKE,
+    payload: { data: response.data }
+  });
+
+  return response;
+};
+
+export const deleteLinkLike = ({ id, likeId }) => async (
+  dispatch,
+  getState
+) => {
+  await backend.delete(`/links/${id}/likes/${likeId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getState().auth.user.loggedIn
+        ? `Bearer ${getState().auth.tokens.access}`
+        : ""
+    }
+  });
+
+  dispatch({
+    type: DELETE_LINK_LIKE
+  });
 };
