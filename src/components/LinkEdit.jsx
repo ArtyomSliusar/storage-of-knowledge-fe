@@ -43,7 +43,11 @@ function LinkEdit({
   };
 
   const renderLink = () => {
-    if (linkDetails && user.loggedIn && user.username === linkDetails.user) {
+    if (
+      linkDetails &&
+      user.loggedIn &&
+      user.username === linkDetails.username
+    ) {
       return (
         <ItemForm
           onSubmit={handleSave}

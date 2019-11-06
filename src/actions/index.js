@@ -265,7 +265,6 @@ export const updateNote = (noteId, noteData) => async (dispatch, getState) => {
       title: noteData.title,
       subjects: noteData.subjects,
       private: noteData.private,
-      user: getState().auth.user.username,
       body: noteData.body
     },
     {
@@ -291,7 +290,6 @@ export const updateLink = (linkId, linkData) => async (dispatch, getState) => {
       title: linkData.title,
       subjects: linkData.subjects,
       private: linkData.private,
-      user: getState().auth.user.username,
       link: linkData.link
     },
     {
@@ -363,7 +361,6 @@ export const createNote = noteData => async (dispatch, getState) => {
       title: noteData.title,
       subjects: noteData.subjects,
       private: noteData.private,
-      user: getState().auth.user.username,
       body: noteData.body
     },
     {
@@ -391,7 +388,6 @@ export const createLink = linkData => async (dispatch, getState) => {
       title: linkData.title,
       subjects: linkData.subjects,
       private: linkData.private,
-      user: getState().auth.user.username,
       link: linkData.link
     },
     {

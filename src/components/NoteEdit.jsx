@@ -43,7 +43,11 @@ function NoteEdit({
   };
 
   const renderNote = () => {
-    if (noteDetails && user.loggedIn && user.username === noteDetails.user) {
+    if (
+      noteDetails &&
+      user.loggedIn &&
+      user.username === noteDetails.username
+    ) {
       return (
         <ItemForm
           onSubmit={handleSave}

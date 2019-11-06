@@ -131,7 +131,7 @@ export default function ItemShow({
   };
 
   const renderActions = () => {
-    if (user.loggedIn && user.username === itemDetails.user) {
+    if (user.loggedIn && user.username === itemDetails.username) {
       return (
         <div className={classes.actions}>
           <Button
@@ -156,7 +156,7 @@ export default function ItemShow({
           </Button>
         </div>
       );
-    } else if (user.loggedIn && user.username !== itemDetails.user) {
+    } else if (user.loggedIn && user.username !== itemDetails.username) {
       return (
         <div className={classes.actions}>
           <Button
@@ -214,7 +214,7 @@ export default function ItemShow({
                       <Grid item xs container direction="column" spacing={2}>
                         <Grid item xs>
                           <Typography variant="subtitle1">
-                            {itemDetails.user}
+                            {itemDetails.username}
                           </Typography>
                           <Typography variant="body2" color="textSecondary">
                             {itemDetails.date_modified}
