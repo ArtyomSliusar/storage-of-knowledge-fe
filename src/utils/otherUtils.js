@@ -49,6 +49,7 @@ function getInitialState() {
     },
     notes: [],
     links: [],
+    openedItem: {},
     snackbar: {
       open: false,
       message: "",

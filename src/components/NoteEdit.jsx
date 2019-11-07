@@ -6,7 +6,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 import history from "../history";
 import ItemForm from "./ItemForm";
-import { getNote, openSnackbar, updateNote } from "../actions";
+import { getItem, openSnackbar, updateNote } from "../actions";
 import { NOTES, SUCCESS } from "../constants";
 
 const useStyles = makeStyles(theme => ({
@@ -19,14 +19,14 @@ function NoteEdit({
   noteId,
   noteDetails,
   user,
-  getNote,
+  getItem,
   updateNote,
   openSnackbar
 }) {
   const classes = useStyles();
 
   useEffect(() => {
-    getNote(noteId);
+    getItem(noteId, NOTES);
   }, []);
 
   const handleSave = formValues => {
@@ -70,7 +70,7 @@ function NoteEdit({
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    noteDetails: state.notes.noteDetails,
+    noteDetails: state.openedItem.details,
     noteId: ownProps.match.params.id,
     user: state.auth.user,
     ...ownProps
@@ -79,5 +79,5 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
   mapStateToProps,
-  { getNote, updateNote, openSnackbar }
+  { getItem, updateNote, openSnackbar }
 )(NoteEdit);

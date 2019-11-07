@@ -5,7 +5,7 @@ import "easymde/dist/easymde.min.css";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 import history from "../history";
-import { getLink, openSnackbar, updateLink } from "../actions";
+import { getItem, openSnackbar, updateLink } from "../actions";
 import { LINKS, SUCCESS } from "../constants";
 import ItemForm from "./ItemForm";
 
@@ -19,14 +19,14 @@ function LinkEdit({
   linkId,
   linkDetails,
   user,
-  getLink,
+  getItem,
   updateLink,
   openSnackbar
 }) {
   const classes = useStyles();
 
   useEffect(() => {
-    getLink(linkId);
+    getItem(linkId, LINKS);
   }, []);
 
   const handleSave = formValues => {
@@ -79,5 +79,5 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
   mapStateToProps,
-  { getLink, updateLink, openSnackbar }
+  { getItem, updateLink, openSnackbar }
 )(LinkEdit);
