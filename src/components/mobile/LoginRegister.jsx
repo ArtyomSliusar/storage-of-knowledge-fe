@@ -6,7 +6,6 @@ import TabPanel from "../TabPanel";
 
 import LoginForm from "../LoginForm";
 import RegisterForm from "../RegisterForm";
-import AdapterLink from "../AdapterLink";
 import history from "../../history";
 
 // TODO: move to form style
@@ -47,22 +46,32 @@ class LoginRegister extends React.Component {
           textColor="primary"
           centered
         >
-          <Tab label="Log in" to="/login" component={AdapterLink} />
-          <Tab label="Register" to="/register" component={AdapterLink} />
+          <Tab
+            label="Log in"
+            onClick={() => {
+              history.replace("/login");
+            }}
+          />
+          <Tab
+            label="Register"
+            onClick={() => {
+              history.replace("/register");
+            }}
+          />
         </Tabs>
 
         <TabPanel value={this.state.tab} index={0}>
           <LoginForm
             classes={classes}
-            onClose={() => history.push("/")}
-            onFormSuccess={() => history.push("/")}
+            onClose={() => history.goBack()}
+            onFormSuccess={() => history.goBack()}
           />
         </TabPanel>
 
         <TabPanel value={this.state.tab} index={1}>
           <RegisterForm
             classes={classes}
-            onClose={() => history.push("/")}
+            onClose={() => history.goBack()}
             onFormSuccess={() => history.push("/login")}
           />
         </TabPanel>

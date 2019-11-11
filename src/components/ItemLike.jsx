@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import { addItemLike, deleteItemLike, getItemLike } from "../actions";
 import Button from "@material-ui/core/Button";
 import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
+
+import history from "../history";
+import { addItemLike, deleteItemLike, getItemLike } from "../actions";
 
 function ItemLike({
   getItemLike,
@@ -10,17 +12,22 @@ function ItemLike({
   deleteItemLike,
   itemLike,
   itemId,
-  itemType
+  itemType,
+  loggedIn
 }) {
   useEffect(() => {
     getItemLike(itemId, itemType);
   }, []);
 
   const toggleLike = () => {
-    if (!itemLike) {
-      addItemLike(itemId, itemType);
+    if (!loggedIn) {
+      history.push("/login");
     } else {
-      deleteItemLike(itemId, itemType, itemLike.id);
+      if (!itemLike) {
+        addItemLike(itemId, itemType);
+      } else {
+        deleteItemLike(itemId, itemType, itemLike.id);
+      }
     }
   };
 
@@ -40,6 +47,7 @@ function ItemLike({
 const mapStateToProps = (state, ownProps) => {
   return {
     itemLike: state.openedItem.like,
+    loggedIn: state.auth.user.loggedIn,
     ...ownProps
   };
 };

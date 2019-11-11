@@ -16,7 +16,9 @@ import {
   UPDATE_ITEM,
   DELETE_ITEM,
   ADD_ITEM_LIKE,
-  DELETE_ITEM_LIKE
+  DELETE_ITEM_LIKE,
+  ADD_ITEM_COMMENT,
+  DELETE_ITEM_COMMENT
 } from "../constants";
 import history from "../history";
 import axios from "axios";
@@ -434,8 +436,8 @@ export const deleteItemLike = (id, type, likeId) => async (
   });
 };
 
-export const getNoteComments = id => async (dispatch, getState) => {
-  const response = await backend.get(`/notes/${id}/comments/`, {
+export const getItemComments = (id, itemType) => async (dispatch, getState) => {
+  const response = await backend.get(`/${itemType}/${id}/comments/`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: getState().auth.user.loggedIn
@@ -447,5 +449,48 @@ export const getNoteComments = id => async (dispatch, getState) => {
   dispatch({
     type: GET_ITEM_COMMENTS,
     payload: { data: response.data }
+  });
+};
+
+export const addItemComment = (id, type, body, parentId = null) => async (
+  dispatch,
+  getState
+) => {
+  await backend.post(
+    `/${type}/${id}/comments/`,
+    {
+      body: body,
+      parent: parentId
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getState().auth.user.loggedIn
+          ? `Bearer ${getState().auth.tokens.access}`
+          : ""
+      }
+    }
+  );
+
+  dispatch({
+    type: ADD_ITEM_COMMENT
+  });
+};
+
+export const deleteItemComment = (id, type, commentId) => async (
+  dispatch,
+  getState
+) => {
+  await backend.delete(`/${type}/${id}/comments/${commentId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getState().auth.user.loggedIn
+        ? `Bearer ${getState().auth.tokens.access}`
+        : ""
+    }
+  });
+
+  dispatch({
+    type: DELETE_ITEM_COMMENT
   });
 };

@@ -25,8 +25,7 @@ import SimpleMDE from "react-simplemde-editor";
 import { connect } from "react-redux";
 import ItemLike from "./ItemLike";
 import { getItem } from "../actions";
-
-// TODO: CommentBlock
+import ItemComments from "./ItemComments";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -132,12 +131,18 @@ function ItemShow({ getItem, itemId, itemType, itemDetails, user }) {
           </Button>
         </div>
       );
-    } else if (user.loggedIn && user.username !== itemDetails.username) {
+    } else {
       return (
         <div className={classes.actions}>
           <ItemLike itemId={itemId} itemType={itemType} />
         </div>
       );
+    }
+  };
+
+  const renderComments = () => {
+    if (itemType === NOTES) {
+      return <ItemComments itemId={itemId} itemType={itemType} />;
     }
     return null;
   };
@@ -225,6 +230,7 @@ function ItemShow({ getItem, itemId, itemType, itemDetails, user }) {
   return (
     <React.Fragment>
       {renderItem()}
+      {renderComments()}
       <Modal open={modalOpen} title="Confirmation" onClose={handleModalClose}>
         <ItemDelete
           onClose={handleModalClose}

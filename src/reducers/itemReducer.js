@@ -4,7 +4,9 @@ import {
   DELETE_ITEM,
   ADD_ITEM_LIKE,
   DELETE_ITEM_LIKE,
-  GET_ITEM_COMMENTS
+  GET_ITEM_COMMENTS,
+  DELETE_ITEM_COMMENT,
+  ADD_ITEM_COMMENT
 } from "../constants";
 import * as _ from "lodash";
 
@@ -32,8 +34,18 @@ export default (state = {}, action) => {
         ...state,
         like: action.payload.data
       };
+    case ADD_ITEM_COMMENT:
+      return {
+        ...state,
+        comments: null // refresh tree structure needed
+      };
     case DELETE_ITEM_LIKE:
       return _.omit(state, "like");
+    case DELETE_ITEM_COMMENT:
+      return {
+        ...state,
+        comments: null // refresh tree structure needed
+      };
     default:
       return state;
   }

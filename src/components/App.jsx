@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     display: "flex",
     height: "100vh",
+    width: "100%",
     flexFlow: "row wrap",
     "& > *": {
       /* We tell all items to be 100% width, via flex-basis */
@@ -31,10 +32,12 @@ const useStyles = makeStyles(theme => ({
     }
   },
   header: {
-    height: "10vh"
+    height: "10vh",
+    width: "100%"
   },
   main: {
     height: "90vh",
+    width: "100%",
     "& > *": {
       [theme.breakpoints.up("sm")]: {
         padding: theme.spacing(2, 3)
