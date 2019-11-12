@@ -70,13 +70,19 @@ export const logout = () => async (dispatch, getState) => {
   history.push("/");
 };
 
-export const register = (username, email, password) => async dispatch => {
+export const register = (
+  username,
+  email,
+  password,
+  recaptcha
+) => async dispatch => {
   await backend.post(
     "/users/",
     {
       username: username,
       email: email,
-      password: password
+      password: password,
+      recaptcha: recaptcha
     },
     {
       headers: {

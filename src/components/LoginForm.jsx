@@ -1,10 +1,19 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Button } from "@material-ui/core";
+import { Button, withStyles } from "@material-ui/core";
 import { Field, reduxForm, SubmissionError } from "redux-form";
 import { login, openSnackbar } from "../actions";
 import { renderTextField } from "../utils/formUtils";
 import { ERROR } from "../constants";
+
+const styles = theme => ({
+  textField: {
+    width: "100%"
+  },
+  actionButton: {
+    margin: theme.spacing(2, 1)
+  }
+});
 
 class LoginForm extends React.Component {
   onSubmit = ({ username, password }) => {
@@ -95,7 +104,9 @@ const formWrapped = reduxForm({
   validate
 })(LoginForm);
 
-export default connect(
-  null,
-  { login, openSnackbar }
-)(formWrapped);
+export default withStyles(styles)(
+  connect(
+    null,
+    { login, openSnackbar }
+  )(formWrapped)
+);

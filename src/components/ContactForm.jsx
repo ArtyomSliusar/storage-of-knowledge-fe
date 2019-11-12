@@ -1,15 +1,24 @@
 import React from "react";
-import { Button } from "@material-ui/core";
+import { Button, withStyles } from "@material-ui/core";
 import { Field, reduxForm, SubmissionError } from "redux-form";
-import { renderTextField } from "../utils/formUtils";
+import { renderRecaptchaField, renderTextField } from "../utils/formUtils";
 import { contact } from "../utils/apiUtils";
 import { connect } from "react-redux";
 import { openSnackbar } from "../actions";
 import { ERROR } from "../constants";
 
+const styles = theme => ({
+  textField: {
+    width: "100%"
+  },
+  actionButton: {
+    margin: theme.spacing(2, 1)
+  }
+});
+
 class ContactForm extends React.Component {
-  onSubmit = ({ name, email, message }) => {
-    return contact(name, email, message)
+  onSubmit = ({ name, email, message, recaptcha }) => {
+    return contact(name, email, message, recaptcha)
       .then(() => {
         this.props.onFormSuccess();
       })
@@ -67,6 +76,14 @@ class ContactForm extends React.Component {
           />
         </div>
 
+        <div>
+          <Field
+            name="recaptcha"
+            component={renderRecaptchaField}
+            margin="normal"
+          />
+        </div>
+
         <div style={{ color: "red" }}>{error}</div>
 
         <Button
@@ -93,7 +110,7 @@ class ContactForm extends React.Component {
 
 const validate = values => {
   const errors = {};
-  ["name", "email", "message"].forEach(field => {
+  ["name", "email", "message", "recaptcha"].forEach(field => {
     if (!values[field]) {
       errors[field] = "Required";
     }
@@ -112,7 +129,9 @@ const formWrapped = reduxForm({
   validate
 })(ContactForm);
 
-export default connect(
-  null,
-  { openSnackbar }
-)(formWrapped);
+export default withStyles(styles)(
+  connect(
+    null,
+    { openSnackbar }
+  )(formWrapped)
+);

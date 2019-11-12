@@ -5,6 +5,7 @@ export const LINKS = "links";
 // API
 export const API_VERSION = "v1";
 export const BASE_URL = `http://127.0.0.1:8000/api/${API_VERSION}`;
+export const RECAPTCHA_PUBLIC_KEY = "";
 
 // Notification types
 export const SUCCESS = "SUCCESS";

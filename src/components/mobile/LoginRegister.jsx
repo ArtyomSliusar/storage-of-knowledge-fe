@@ -8,18 +8,10 @@ import LoginForm from "../LoginForm";
 import RegisterForm from "../RegisterForm";
 import history from "../../history";
 
-// TODO: move to form style
 const styles = theme => ({
   root: {
     maxWidth: 600,
     margin: "auto"
-  },
-  textField: {
-    width: "100%"
-  },
-  actionButton: {
-    marginRight: theme.spacing(2),
-    marginBottom: theme.spacing(1)
   }
 });
 
@@ -62,7 +54,6 @@ class LoginRegister extends React.Component {
 
         <TabPanel value={this.state.tab} index={0}>
           <LoginForm
-            classes={classes}
             onClose={() => history.goBack()}
             onFormSuccess={() => history.goBack()}
           />
@@ -70,9 +61,11 @@ class LoginRegister extends React.Component {
 
         <TabPanel value={this.state.tab} index={1}>
           <RegisterForm
-            classes={classes}
             onClose={() => history.goBack()}
-            onFormSuccess={() => history.push("/login")}
+            onFormSuccess={() => {
+              this.handleTabChange(null, 0);
+              history.replace("/login");
+            }}
           />
         </TabPanel>
       </div>

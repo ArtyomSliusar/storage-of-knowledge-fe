@@ -4,13 +4,14 @@ import backend from "../apis/backend";
  * Requests with no storage update AND no authentication.
  */
 
-async function contact(name, email, message) {
+async function contact(name, email, message, recaptcha) {
   await backend.post(
     "/contact/",
     {
       name: name,
       email: email,
-      message: message
+      message: message,
+      recaptcha: recaptcha
     },
     {
       headers: {

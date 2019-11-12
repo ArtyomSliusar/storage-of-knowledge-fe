@@ -8,6 +8,8 @@ import Select from "@material-ui/core/Select";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import Chip from "@material-ui/core/Chip";
 import SimpleMDE from "react-simplemde-editor";
+import { RECAPTCHA_PUBLIC_KEY } from "../constants";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const renderTextField = ({
   label,
@@ -48,6 +50,13 @@ const renderSwitchField = ({ input, label, color }) => (
     }
     label={label}
   />
+);
+
+const renderRecaptchaField = ({ input, meta: { touched, error } }) => (
+  <div>
+    <ReCAPTCHA sitekey={RECAPTCHA_PUBLIC_KEY} onChange={input.onChange} />
+    <div style={{ color: "red" }}>{touched ? error : ""}</div>
+  </div>
 );
 
 const renderFromHelper = ({ touched, error }) => {
@@ -101,5 +110,6 @@ export {
   renderTextField,
   renderSwitchField,
   renderSelectField,
-  renderSimpleMDE
+  renderSimpleMDE,
+  renderRecaptchaField
 };
