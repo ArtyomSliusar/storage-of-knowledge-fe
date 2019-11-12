@@ -80,9 +80,8 @@ export default function MobileNavBar(props) {
     <React.Fragment>
       <AppBar position="static">
         <Toolbar>
-          <img alt="Logo" src={logo} className={classes.icon} />
           <Button component={AdapterLink} to="/">
-            Home
+            <img alt="Logo" src={logo} />
           </Button>
           <span className={classes.separator} />
 

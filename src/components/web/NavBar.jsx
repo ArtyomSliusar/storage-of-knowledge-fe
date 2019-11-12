@@ -21,9 +21,6 @@ const useStyles = makeStyles(theme => ({
       marginRight: 0
     }
   },
-  icon: {
-    marginRight: theme.spacing(2)
-  },
   separator: {
     flexGrow: 1
   }
@@ -54,9 +51,8 @@ export default function WebNavBar(props) {
     <React.Fragment>
       <AppBar position="static">
         <Toolbar>
-          <img alt="Logo" src={logo} className={classes.icon} />
           <Button component={AdapterLink} to="/" className={classes.navButton}>
-            Home
+            <img alt="Logo" src={logo} />
           </Button>
           <span className={classes.separator} />
           <Button

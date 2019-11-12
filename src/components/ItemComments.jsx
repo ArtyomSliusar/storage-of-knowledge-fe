@@ -55,6 +55,7 @@ function ItemComments({
 }) {
   const classes = useStyles();
   const prefixId = "reply-for-";
+  const charLimit = 2000;
 
   useEffect(() => {
     getItemComments(itemId, itemType);
@@ -115,6 +116,9 @@ function ItemComments({
               label="Comment"
               multiline
               rows="4"
+              inputProps={{
+                maxLength: { charLimit }
+              }}
               className={classes.textField}
               margin="normal"
               variant="outlined"
