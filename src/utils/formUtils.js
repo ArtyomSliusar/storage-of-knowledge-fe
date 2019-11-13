@@ -10,6 +10,7 @@ import Chip from "@material-ui/core/Chip";
 import SimpleMDE from "react-simplemde-editor";
 import { RECAPTCHA_PUBLIC_KEY } from "../constants";
 import ReCAPTCHA from "react-google-recaptcha";
+import TimezonePicker from "react-timezone";
 
 const renderTextField = ({
   label,
@@ -52,9 +53,32 @@ const renderSwitchField = ({ input, label, color }) => (
   />
 );
 
-const renderRecaptchaField = ({ input, meta: { touched, error } }) => (
-  <div>
+const renderRecaptchaField = ({
+  input,
+  meta: { touched, error },
+  ...custom
+}) => (
+  <div {...custom}>
     <ReCAPTCHA sitekey={RECAPTCHA_PUBLIC_KEY} onChange={input.onChange} />
+    <div style={{ color: "red" }}>{touched ? error : ""}</div>
+  </div>
+);
+
+const renderTimezoneField = ({
+  input,
+  meta: { touched, error },
+  classes,
+  ...custom
+}) => (
+  <div {...custom}>
+    <TimezonePicker
+      {...input}
+      className={classes.timezoneField}
+      inputProps={{
+        placeholder: "Select Timezone...",
+        name: "timezone"
+      }}
+    />
     <div style={{ color: "red" }}>{touched ? error : ""}</div>
   </div>
 );
@@ -111,5 +135,6 @@ export {
   renderSwitchField,
   renderSelectField,
   renderSimpleMDE,
-  renderRecaptchaField
+  renderRecaptchaField,
+  renderTimezoneField
 };

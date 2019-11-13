@@ -9,6 +9,7 @@ import UserMenu from "./UserMenu";
 import LoginRegister from "./LoginRegister";
 import Contact from "./Contact";
 import AdapterLink from "../AdapterLink";
+import history from "../../history";
 
 const useStyles = makeStyles(theme => ({
   navButton: {
@@ -68,6 +69,7 @@ export default function WebNavBar(props) {
       <LoginRegister
         open={loginModalOpen}
         onClose={() => setLoginModalOpen(false)}
+        onFormSuccess={() => history.go()}
       />
       <Contact
         open={contactModalOpen}

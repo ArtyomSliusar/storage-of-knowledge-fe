@@ -28,7 +28,10 @@ export default function LoginRegister(props) {
       </Tabs>
 
       <TabPanel value={tab} index={0}>
-        <LoginForm onClose={props.onClose} onFormSuccess={props.onClose} />
+        <LoginForm
+          onClose={props.onClose}
+          onFormSuccess={props.onFormSuccess}
+        />
       </TabPanel>
 
       <TabPanel value={tab} index={1}>

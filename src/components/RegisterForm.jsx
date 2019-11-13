@@ -1,7 +1,11 @@
 import React from "react";
 import { Button, withStyles } from "@material-ui/core";
 import { Field, reduxForm, SubmissionError } from "redux-form";
-import { renderRecaptchaField, renderTextField } from "../utils/formUtils";
+import {
+  renderRecaptchaField,
+  renderTextField,
+  renderTimezoneField
+} from "../utils/formUtils";
 import { connect } from "react-redux";
 import { openSnackbar, register } from "../actions";
 import { ERROR } from "../constants";
@@ -10,15 +14,26 @@ const styles = theme => ({
   textField: {
     width: "100%"
   },
+  customField: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1)
+  },
+  timezoneField: {
+    width: "100%",
+    "& ul": {
+      zIndex: 1,
+      background: "rgba(252, 252, 252, 1) !important"
+    }
+  },
   actionButton: {
     margin: theme.spacing(2, 1)
   }
 });
 
 class RegisterForm extends React.Component {
-  onSubmit = ({ username, email, password, recaptcha }) => {
+  onSubmit = ({ username, email, password, timezone, recaptcha }) => {
     return this.props
-      .register(username, email, password, recaptcha)
+      .register(username, email, password, timezone, recaptcha)
       .then(() => {
         this.props.onFormSuccess();
       })
@@ -77,8 +92,19 @@ class RegisterForm extends React.Component {
 
         <div>
           <Field
+            name="timezone"
+            classes={classes}
+            component={renderTimezoneField}
+            className={classes.customField}
+            margin="normal"
+          />
+        </div>
+
+        <div>
+          <Field
             name="recaptcha"
             component={renderRecaptchaField}
+            className={classes.customField}
             margin="normal"
           />
         </div>

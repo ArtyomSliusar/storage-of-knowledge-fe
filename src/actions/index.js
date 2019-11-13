@@ -74,6 +74,7 @@ export const register = (
   username,
   email,
   password,
+  timezone,
   recaptcha
 ) => async dispatch => {
   await backend.post(
@@ -82,6 +83,7 @@ export const register = (
       username: username,
       email: email,
       password: password,
+      time_zone: timezone,
       recaptcha: recaptcha
     },
     {
