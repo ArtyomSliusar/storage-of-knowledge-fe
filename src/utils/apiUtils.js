@@ -55,4 +55,43 @@ async function activateUser(usernameEmail, activationCode) {
   );
 }
 
-export { contact, getSubjects, getSuggestions, activateUser };
+async function resetPassword(usernameEmail, newPassword, activationCode) {
+  await backend.post(
+    "/user-reset-password/",
+    {
+      username_email: usernameEmail,
+      new_password: newPassword,
+      reset_password_code: activationCode
+    },
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
+}
+
+async function sendConfirmation(usernameEmail, confirmationType, recaptcha) {
+  await backend.post(
+    "/user-send-confirmation/",
+    {
+      username_email: usernameEmail,
+      type: confirmationType,
+      recaptcha: recaptcha
+    },
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
+}
+
+export {
+  contact,
+  getSubjects,
+  getSuggestions,
+  activateUser,
+  sendConfirmation,
+  resetPassword
+};

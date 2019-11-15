@@ -20,6 +20,8 @@ import LinkEdit from "./LinkEdit";
 import NoteCreate from "./NoteCreate";
 import LinkCreate from "./LinkCreate";
 import ActivateUserForm from "./ActivateUserForm";
+import SendConfirmationForm from "./SendConfirmationForm";
+import ResetPasswordForm from "./ResetPasswordForm";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -74,9 +76,10 @@ export default function App() {
             <Route exact path="/activate-user" component={ActivateUserForm} />
             <Route
               exact
-              path="/send-confirmation"
-              component={ActivateUserForm}
+              path="/send-confirmation/:type"
+              component={SendConfirmationForm}
             />
+            <Route exact path="/reset-password" component={ResetPasswordForm} />
             <Route exact path="/logout" component={Logout} />
             <Route exact path="/contact" component={MobileContact} />
             <Route exact path="/filters" component={MobileFilters} />

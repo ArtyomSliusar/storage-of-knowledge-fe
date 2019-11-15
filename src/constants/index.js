@@ -7,6 +7,10 @@ export const API_VERSION = "v1";
 export const BASE_URL = `http://127.0.0.1:8000/api/${API_VERSION}`;
 export const RECAPTCHA_PUBLIC_KEY = "6LfOQcIUAAAAAGHJpQsjDOLVRtiS1HKsU2Wvmm3K";
 
+// Confirmation types
+export const ACTIVATION = "activation";
+export const PASSWORD_RESET = "password_reset";
+
 // Notification types
 export const SUCCESS = "SUCCESS";
 export const WARNING = "WARNING";

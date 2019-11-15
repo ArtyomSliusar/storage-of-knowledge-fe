@@ -3,17 +3,13 @@ import { connect } from "react-redux";
 import { Button, makeStyles, useTheme } from "@material-ui/core";
 import { Field, reduxForm, SubmissionError } from "redux-form";
 import Box from "@material-ui/core/Box";
-import InfoIcon from "@material-ui/icons/Info";
+import useMediaQuery from "@material-ui/core/useMediaQuery/useMediaQuery";
 
 import { openSnackbar } from "../actions";
-import { renderTextField } from "../utils/formUtils";
-import { ACTIVATION, ERROR, SUCCESS } from "../constants";
-import { activateUser } from "../utils/apiUtils";
+import { renderRecaptchaField, renderTextField } from "../utils/formUtils";
+import { ACTIVATION, ERROR, INFO, PASSWORD_RESET } from "../constants";
+import { sendConfirmation } from "../utils/apiUtils";
 import history from "../history";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import useMediaQuery from "@material-ui/core/useMediaQuery/useMediaQuery";
-import { Link } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   textField: {
     width: "100%"
   },
-  link: {
+  customField: {
     margin: theme.spacing(2, 0)
   },
   actionButton: {
@@ -38,14 +34,18 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function ActivateUserForm({ handleSubmit, error, openSnackbar }) {
+function SendConfirmationForm({
+  handleSubmit,
+  error,
+  openSnackbar,
+  confirmationType
+}) {
   const theme = useTheme();
   const classes = useStyles();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
-  const helperText = "check your email for activation code";
 
-  const onSubmit = ({ usernameEmail, activationCode }) => {
-    return activateUser(usernameEmail, activationCode)
+  const onSubmit = ({ usernameEmail, recaptcha }) => {
+    return sendConfirmation(usernameEmail, confirmationType, recaptcha)
       .then(() => {
         onFormSuccess();
       })
@@ -67,55 +67,12 @@ function ActivateUserForm({ handleSubmit, error, openSnackbar }) {
   };
 
   const onFormSuccess = () => {
-    openSnackbar("User successfully activated", SUCCESS);
-    history.replace("/login");
-  };
-
-  const renderActivationCodeField = () => {
-    if (isMobile) {
-      return (
-        <React.Fragment>
-          <Field
-            name="activationCode"
-            type="password"
-            component={renderTextField}
-            className={classes.textField}
-            label="Activation code"
-            margin="normal"
-          />
-          <FormHelperText>
-            <InfoIcon
-              fontSize="small"
-              color="primary"
-              titleAccess={helperText}
-              style={{ marginRight: theme.spacing(1) }}
-            />
-            <span>{helperText}</span>
-          </FormHelperText>
-        </React.Fragment>
-      );
-    } else {
-      return (
-        <Field
-          name="activationCode"
-          type="password"
-          component={renderTextField}
-          className={classes.textField}
-          label="Activation code"
-          margin="normal"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <InfoIcon
-                  fontSize="small"
-                  color="primary"
-                  titleAccess={helperText}
-                />
-              </InputAdornment>
-            )
-          }}
-        />
-      );
+    if (confirmationType === ACTIVATION) {
+      openSnackbar("Activation code was sent", INFO);
+      history.goBack();
+    } else if (confirmationType === PASSWORD_RESET) {
+      openSnackbar("Reset code was sent", INFO);
+      history.replace("/reset-password");
     }
   };
 
@@ -133,13 +90,17 @@ function ActivateUserForm({ handleSubmit, error, openSnackbar }) {
             />
           </div>
 
-          <div>{renderActivationCodeField()}</div>
+          <div>
+            <Field
+              name="recaptcha"
+              size={isMobile ? "compact" : "normal"}
+              component={renderRecaptchaField}
+              className={classes.customField}
+              margin="normal"
+            />
+          </div>
 
           <div style={{ color: "red" }}>{error}</div>
-
-          <div className={classes.link}>
-            <Link to={`/send-confirmation/${ACTIVATION}`}>Resend code</Link>
-          </div>
 
           <div className={classes.actionButton}>
             <Button
@@ -148,7 +109,7 @@ function ActivateUserForm({ handleSubmit, error, openSnackbar }) {
               color="primary"
               size="medium"
             >
-              Activate
+              Send code
             </Button>
             <Button
               variant="contained"
@@ -166,7 +127,7 @@ function ActivateUserForm({ handleSubmit, error, openSnackbar }) {
 
 const validate = values => {
   const errors = {};
-  ["usernameEmail", "activationCode"].forEach(field => {
+  ["usernameEmail", "recaptcha"].forEach(field => {
     if (!values[field]) {
       errors[field] = "Required";
     }
@@ -175,11 +136,18 @@ const validate = values => {
 };
 
 const formWrapped = reduxForm({
-  form: "activationForm",
+  form: "confirmationForm",
   validate
-})(ActivateUserForm);
+})(SendConfirmationForm);
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    confirmationType: ownProps.match.params.type,
+    ...ownProps
+  };
+};
 
 export default connect(
-  null,
+  mapStateToProps,
   { openSnackbar }
 )(formWrapped);

@@ -4,15 +4,23 @@ import { Button, withStyles } from "@material-ui/core";
 import { Field, reduxForm, SubmissionError } from "redux-form";
 import { login, openSnackbar } from "../actions";
 import { renderTextField } from "../utils/formUtils";
-import { ERROR } from "../constants";
+import { ERROR, PASSWORD_RESET } from "../constants";
 import history from "../history";
+import { Link } from "react-router-dom";
 
 const styles = theme => ({
   textField: {
     width: "100%"
   },
+  link: {
+    margin: theme.spacing(2, 0)
+  },
   actionButton: {
-    margin: theme.spacing(2, 1)
+    flexGrow: 1,
+    margin: theme.spacing(2, 0),
+    "& button": {
+      margin: theme.spacing(0, 1)
+    }
   }
 });
 
@@ -72,23 +80,25 @@ class LoginForm extends React.Component {
 
         <div style={{ color: "red" }}>{error}</div>
 
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          size="medium"
-          className={classes.actionButton}
-        >
-          Log in
-        </Button>
-        <Button
-          variant="contained"
-          size="medium"
-          onClick={onClose}
-          className={classes.actionButton}
-        >
-          Cancel
-        </Button>
+        <div className={classes.link}>
+          <Link to={`/send-confirmation/${PASSWORD_RESET}`}>
+            Reset password
+          </Link>
+        </div>
+
+        <div className={classes.actionButton}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="medium"
+          >
+            Log in
+          </Button>
+          <Button variant="contained" size="medium" onClick={onClose}>
+            Cancel
+          </Button>
+        </div>
       </form>
     );
   }

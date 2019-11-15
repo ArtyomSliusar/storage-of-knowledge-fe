@@ -18,8 +18,7 @@ const useStyles = makeStyles(theme => ({
     width: "100%"
   },
   customField: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(1)
+    margin: theme.spacing(2, 0)
   },
   timezoneField: {
     width: "100%",
