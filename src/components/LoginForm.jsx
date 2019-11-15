@@ -5,6 +5,7 @@ import { Field, reduxForm, SubmissionError } from "redux-form";
 import { login, openSnackbar } from "../actions";
 import { renderTextField } from "../utils/formUtils";
 import { ERROR } from "../constants";
+import history from "../history";
 
 const styles = theme => ({
   textField: {
@@ -20,7 +21,7 @@ class LoginForm extends React.Component {
     return this.props
       .login(username, password)
       .then(() => {
-        this.props.onFormSuccess();
+        this.onFormSuccess();
       })
       .catch(error => {
         if (error.response) {
@@ -38,6 +39,10 @@ class LoginForm extends React.Component {
         }
         this.props.openSnackbar(error.toString(), ERROR);
       });
+  };
+
+  onFormSuccess = () => {
+    history.push("/");
   };
 
   render() {

@@ -40,4 +40,19 @@ async function getSuggestions(filters, query) {
   );
 }
 
-export { contact, getSubjects, getSuggestions };
+async function activateUser(usernameEmail, activationCode) {
+  await backend.post(
+    "/user-activate/",
+    {
+      username_email: usernameEmail,
+      activation_code: activationCode
+    },
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
+}
+
+export { contact, getSubjects, getSuggestions, activateUser };

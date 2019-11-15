@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.css";
 
 import Navbar from "./NavBar";
 import Home from "./Home";
-import MobileLoginRegister from "./mobile/LoginRegister";
+import LoginRegister from "./LoginRegister";
 import MobileNoteDelete from "./mobile/NoteDelete";
 import MobileLinkDelete from "./mobile/LinkDelete";
 import history from "../history";
@@ -19,6 +19,7 @@ import LinkShow from "./LinkShow";
 import LinkEdit from "./LinkEdit";
 import NoteCreate from "./NoteCreate";
 import LinkCreate from "./LinkCreate";
+import ActivateUserForm from "./ActivateUserForm";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -63,12 +64,18 @@ export default function App() {
             <Route
               exact
               path="/login"
-              render={props => <MobileLoginRegister {...props} tab={0} />}
+              render={props => <LoginRegister {...props} tab={0} />}
             />
             <Route
               exact
-              path="/register"
-              render={props => <MobileLoginRegister {...props} tab={1} />}
+              path="/users/new"
+              render={props => <LoginRegister {...props} tab={1} />}
+            />
+            <Route exact path="/activate-user" component={ActivateUserForm} />
+            <Route
+              exact
+              path="/send-confirmation"
+              component={ActivateUserForm}
             />
             <Route exact path="/logout" component={Logout} />
             <Route exact path="/contact" component={MobileContact} />

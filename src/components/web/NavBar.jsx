@@ -6,7 +6,6 @@ import Button from "@material-ui/core/Button";
 
 import logo from "../../logo.svg";
 import UserMenu from "./UserMenu";
-import LoginRegister from "./LoginRegister";
 import Contact from "./Contact";
 import AdapterLink from "../AdapterLink";
 import history from "../../history";
@@ -29,7 +28,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function WebNavBar(props) {
   const { items, loggedIn } = props;
-  const [loginModalOpen, setLoginModalOpen] = React.useState(false);
   const [contactModalOpen, setContactModalOpen] = React.useState(false);
   const classes = useStyles();
 
@@ -37,7 +35,7 @@ export default function WebNavBar(props) {
     if (!loggedIn) {
       return (
         <Button
-          onClick={() => setLoginModalOpen(true)}
+          onClick={() => history.push("/login")}
           className={classes.navButton}
         >
           Log in
@@ -66,11 +64,6 @@ export default function WebNavBar(props) {
           <LogInOut />
         </Toolbar>
       </AppBar>
-      <LoginRegister
-        open={loginModalOpen}
-        onClose={() => setLoginModalOpen(false)}
-        onFormSuccess={() => history.go()}
-      />
       <Contact
         open={contactModalOpen}
         onClose={() => setContactModalOpen(false)}

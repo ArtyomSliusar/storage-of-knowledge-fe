@@ -2,11 +2,11 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import TabPanel from "../TabPanel";
+import TabPanel from "./TabPanel";
 
-import LoginForm from "../LoginForm";
-import RegisterForm from "../RegisterForm";
-import history from "../../history";
+import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
+import history from "../history";
 
 const styles = theme => ({
   root: {
@@ -47,26 +47,17 @@ class LoginRegister extends React.Component {
           <Tab
             label="Register"
             onClick={() => {
-              history.replace("/register");
+              history.replace("/users/new");
             }}
           />
         </Tabs>
 
         <TabPanel value={this.state.tab} index={0}>
-          <LoginForm
-            onClose={() => history.goBack()}
-            onFormSuccess={() => history.goBack()}
-          />
+          <LoginForm onClose={() => history.goBack()} />
         </TabPanel>
 
         <TabPanel value={this.state.tab} index={1}>
-          <RegisterForm
-            onClose={() => history.goBack()}
-            onFormSuccess={() => {
-              this.handleTabChange(null, 0);
-              history.replace("/login");
-            }}
-          />
+          <RegisterForm onClose={() => history.goBack()} />
         </TabPanel>
       </div>
     );

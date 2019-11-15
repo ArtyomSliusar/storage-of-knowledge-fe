@@ -56,10 +56,15 @@ const renderSwitchField = ({ input, label, color }) => (
 const renderRecaptchaField = ({
   input,
   meta: { touched, error },
+  size,
   ...custom
 }) => (
   <div {...custom}>
-    <ReCAPTCHA sitekey={RECAPTCHA_PUBLIC_KEY} onChange={input.onChange} />
+    <ReCAPTCHA
+      size={size}
+      sitekey={RECAPTCHA_PUBLIC_KEY}
+      onChange={input.onChange}
+    />
     <div style={{ color: "red" }}>{touched ? error : ""}</div>
   </div>
 );
