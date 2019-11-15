@@ -1,26 +1,41 @@
 import React from "react";
-import { Button, withStyles } from "@material-ui/core";
+import { Button, makeStyles, useTheme, withStyles } from "@material-ui/core";
 import { Field, reduxForm, SubmissionError } from "redux-form";
 import { renderRecaptchaField, renderTextField } from "../utils/formUtils";
 import { contact } from "../utils/apiUtils";
 import { connect } from "react-redux";
 import { openSnackbar } from "../actions";
 import { ERROR } from "../constants";
+import Box from "@material-ui/core/Box";
+import useMediaQuery from "@material-ui/core/useMediaQuery/useMediaQuery";
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
+  box: {
+    padding: theme.spacing(3)
+  },
   textField: {
     width: "100%"
   },
   actionButton: {
     margin: theme.spacing(2, 1)
   }
-});
+}));
 
-class ContactForm extends React.Component {
-  onSubmit = ({ name, email, message, recaptcha }) => {
+function ContactForm({
+  handleSubmit,
+  error,
+  onClose,
+  onFormSuccess,
+  openSnackbar
+}) {
+  const theme = useTheme();
+  const classes = useStyles();
+  const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
+
+  const onSubmit = ({ name, email, message, recaptcha }) => {
     return contact(name, email, message, recaptcha)
       .then(() => {
-        this.props.onFormSuccess();
+        onFormSuccess();
       })
       .catch(error => {
         if (error.response) {
@@ -36,14 +51,13 @@ class ContactForm extends React.Component {
             });
           }
         }
-        this.props.openSnackbar(error.toString(), ERROR);
+        openSnackbar(error.toString(), ERROR);
       });
   };
 
-  render() {
-    const { handleSubmit, classes, error, onClose } = this.props;
-    return (
-      <form onSubmit={handleSubmit(this.onSubmit)} autoComplete="off">
+  return (
+    <Box className={classes.box}>
+      <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
         <div>
           <Field
             name="name"
@@ -79,6 +93,7 @@ class ContactForm extends React.Component {
         <div>
           <Field
             name="recaptcha"
+            size={isMobile ? "compact" : "normal"}
             component={renderRecaptchaField}
             margin="normal"
           />
@@ -104,8 +119,8 @@ class ContactForm extends React.Component {
           Cancel
         </Button>
       </form>
-    );
-  }
+    </Box>
+  );
 }
 
 const validate = values => {
@@ -129,9 +144,7 @@ const formWrapped = reduxForm({
   validate
 })(ContactForm);
 
-export default withStyles(styles)(
-  connect(
-    null,
-    { openSnackbar }
-  )(formWrapped)
-);
+export default connect(
+  null,
+  { openSnackbar }
+)(formWrapped);

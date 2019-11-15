@@ -4,8 +4,8 @@ import backend from "../apis/backend";
  * Requests with no storage update AND no authentication.
  */
 
-async function contact(name, email, message, recaptcha) {
-  await backend.post(
+export function contact(name, email, message, recaptcha) {
+  return backend.post(
     "/contact/",
     {
       name: name,
@@ -21,27 +21,24 @@ async function contact(name, email, message, recaptcha) {
   );
 }
 
-async function getSubjects() {
-  return await backend.get("/subjects/", {
+export function getSubjects() {
+  return backend.get("/subjects/", {
     headers: {
       "Content-Type": "application/json"
     }
   });
 }
 
-async function getSuggestions(filters, query) {
-  return await backend.get(
-    `/suggestions/?query=${query}&index=${filters.type}`,
-    {
-      headers: {
-        "Content-Type": "application/json"
-      }
+export function getSuggestions(filters, query) {
+  return backend.get(`/suggestions/?query=${query}&index=${filters.type}`, {
+    headers: {
+      "Content-Type": "application/json"
     }
-  );
+  });
 }
 
-async function activateUser(usernameEmail, activationCode) {
-  await backend.post(
+export function activateUser(usernameEmail, activationCode) {
+  return backend.post(
     "/user-activate/",
     {
       username_email: usernameEmail,
@@ -55,8 +52,8 @@ async function activateUser(usernameEmail, activationCode) {
   );
 }
 
-async function resetPassword(usernameEmail, newPassword, activationCode) {
-  await backend.post(
+export function resetPassword(usernameEmail, newPassword, activationCode) {
+  return backend.post(
     "/user-reset-password/",
     {
       username_email: usernameEmail,
@@ -71,8 +68,8 @@ async function resetPassword(usernameEmail, newPassword, activationCode) {
   );
 }
 
-async function sendConfirmation(usernameEmail, confirmationType, recaptcha) {
-  await backend.post(
+export function sendConfirmation(usernameEmail, confirmationType, recaptcha) {
+  return backend.post(
     "/user-send-confirmation/",
     {
       username_email: usernameEmail,
@@ -86,12 +83,3 @@ async function sendConfirmation(usernameEmail, confirmationType, recaptcha) {
     }
   );
 }
-
-export {
-  contact,
-  getSubjects,
-  getSuggestions,
-  activateUser,
-  sendConfirmation,
-  resetPassword
-};
