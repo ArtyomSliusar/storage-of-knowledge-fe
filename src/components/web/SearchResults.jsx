@@ -154,7 +154,9 @@ function SearchResults({
                         {icon}
                         {item.title}
                       </TableCell>
-                      <TableCell align="right">{item.subjects}</TableCell>
+                      <TableCell align="right">
+                        {item.subjects.join(" | ")}
+                      </TableCell>
                       <TableCell align="right">{item.user}</TableCell>
                       <TableCell align="right">{item.likes_count}</TableCell>
                       <TableCell align="right">{item.date_modified}</TableCell>
