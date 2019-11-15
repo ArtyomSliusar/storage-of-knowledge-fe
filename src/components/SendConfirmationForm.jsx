@@ -54,7 +54,8 @@ function SendConfirmationForm({
           const status = error.response.status;
           if (status >= 400 && status < 500) {
             throw new SubmissionError({
-              _error: error.response.data
+              ...error.response.data,
+              _error: error.response.data.detail
             });
           } else {
             throw new SubmissionError({
