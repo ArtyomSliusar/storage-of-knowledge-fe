@@ -16,6 +16,9 @@ import AdapterLink from "../AdapterLink";
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
+  toolbar: {
+    height: "100%"
+  },
   drawerPaper: {
     width: drawerWidth,
     "& a": {
@@ -79,7 +82,7 @@ export default function MobileNavBar(props) {
   return (
     <React.Fragment>
       <AppBar position="static">
-        <Toolbar>
+        <Toolbar className={classes.toolbar}>
           <Button component={AdapterLink} to="/">
             <img alt="Logo" src={logo} />
           </Button>

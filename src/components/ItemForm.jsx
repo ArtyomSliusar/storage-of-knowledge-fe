@@ -114,6 +114,9 @@ function ItemForm({
           classes={classes}
           component={renderSimpleMDE}
           margin="normal"
+          options={{
+            spellChecker: false
+          }}
         />
       );
     } else if (itemType === LINKS) {

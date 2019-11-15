@@ -11,6 +11,12 @@ import AdapterLink from "../AdapterLink";
 import history from "../../history";
 
 const useStyles = makeStyles(theme => ({
+  appbar: {
+    zIndex: 8 // to hide behind SimpleMDE editor fullscreen
+  },
+  toolbar: {
+    height: "100%"
+  },
   navButton: {
     marginRight: theme.spacing(2),
     color: theme.palette.primary.contrastText,
@@ -48,8 +54,8 @@ export default function WebNavBar(props) {
 
   return (
     <React.Fragment>
-      <AppBar position="static">
-        <Toolbar>
+      <AppBar position="static" className={classes.appbar}>
+        <Toolbar className={classes.toolbar}>
           <Button component={AdapterLink} to="/" className={classes.navButton}>
             <img alt="Logo" src={logo} />
           </Button>
