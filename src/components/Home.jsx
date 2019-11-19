@@ -92,10 +92,8 @@ function Home({
   useEffect(() => {
     // download items only on first start OR refresh
     if (location.state && location.state.refresh) {
-      console.log("home useEffect REFRESH");
       handleRefresh();
     } else if (!itemsInitialized) {
-      console.log("home useEffect INIT");
       downloadItems();
       initializeItems();
     }

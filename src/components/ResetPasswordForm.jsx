@@ -47,7 +47,6 @@ function ResetPasswordForm({ handleSubmit, error, openSnackbar }) {
       })
       .catch(error => {
         if (error.response) {
-          console.log(error.response);
           const status = error.response.status;
           if (status >= 400 && status < 500) {
             throw new SubmissionError({

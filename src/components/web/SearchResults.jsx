@@ -84,7 +84,6 @@ function SearchResults({
   useEffect(() => {
     // download items only on dependencies update
     if (!justMounted) {
-      console.log("web results useEffect");
       downloadItems();
     }
     setJustMounted(false);
