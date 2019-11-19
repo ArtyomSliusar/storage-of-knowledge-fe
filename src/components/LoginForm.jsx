@@ -50,7 +50,7 @@ class LoginForm extends React.Component {
   };
 
   onFormSuccess = () => {
-    history.push("/");
+    history.push("/", { refresh: true });
   };
 
   render() {

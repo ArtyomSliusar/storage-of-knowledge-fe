@@ -1,4 +1,4 @@
-import { INFO, LINKS, NOTES } from "../constants";
+import { LINKS, NOTES } from "../constants";
 import store from "../store";
 
 function setLocalStorageState(state) {
@@ -37,25 +37,8 @@ function getTokenPayload(token) {
   return JSON.parse(atob(tokenPayload));
 }
 
-function getInitialState() {
-  const initialState = {
-    auth: {
-      tokens: {},
-      user: {}
-    },
-    filters: {
-      subjects: [],
-      type: NOTES
-    },
-    notes: [],
-    links: [],
-    openedItem: {},
-    snackbar: {
-      open: false,
-      message: "",
-      type: INFO
-    }
-  };
+function getInitialState(defaultState) {
+  let initialState = JSON.parse(JSON.stringify(defaultState));
   const localStorageState = getLocalStorageState();
   if (localStorageState.auth && localStorageState.auth.tokens) {
     initialState.auth.tokens = localStorageState.auth.tokens;

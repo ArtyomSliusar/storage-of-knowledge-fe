@@ -18,7 +18,9 @@ import {
   ADD_ITEM_LIKE,
   DELETE_ITEM_LIKE,
   ADD_ITEM_COMMENT,
-  DELETE_ITEM_COMMENT
+  DELETE_ITEM_COMMENT,
+  INITIALIZE_ITEMS,
+  CHANGE_ITEMS_DISPLAY
 } from "../constants";
 import history from "../history";
 import axios from "axios";
@@ -126,30 +128,41 @@ export const openSnackbar = (message, type) => {
   };
 };
 
+export const initializeItems = () => {
+  return {
+    type: INITIALIZE_ITEMS
+  };
+};
+
+export const changeItemsDisplay = params => {
+  return {
+    type: CHANGE_ITEMS_DISPLAY,
+    payload: { display: params }
+  };
+};
+
 export const closeSnackbar = () => {
   return {
     type: CLOSE_SNACKBAR
   };
 };
 
-export const getNotes = ({
-  filters,
-  search,
-  orderBy,
-  limit,
-  order = "asc"
-} = {}) => async (dispatch, getState) => {
-  const limitQuery = `limit=${limit}`;
+export const getNotes = search => async (dispatch, getState) => {
+  const state = getState();
+  const display = state.itemsMeta.display;
+  const limitQuery = `limit=${display.limit}`;
 
   const searchQuery = search ? `&search=${search}` : "";
 
   const filtersQuery =
-    filters.subjects.length > 0
-      ? `&subjects=in:${filters.subjects.join(",")}`
+    state.filters.subjects.length > 0
+      ? `&subjects=in:${state.filters.subjects.join(",")}`
       : "";
 
-  const orderQuery = orderBy
-    ? `&ordering=${order === "desc" ? "-" + orderBy : orderBy}`
+  const orderQuery = display.orderBy
+    ? `&ordering=${
+        display.order === "desc" ? "-" + display.orderBy : display.orderBy
+      }`
     : "";
 
   const response = await backend.get(
@@ -157,8 +170,8 @@ export const getNotes = ({
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization: getState().auth.user.loggedIn
-          ? `Bearer ${getState().auth.tokens.access}`
+        Authorization: state.auth.user.loggedIn
+          ? `Bearer ${state.auth.tokens.access}`
           : ""
       }
     }
@@ -188,24 +201,22 @@ export const getMoreNotes = url => async (dispatch, getState) => {
   }
 };
 
-export const getLinks = ({
-  filters,
-  search,
-  orderBy,
-  limit,
-  order = "asc"
-} = {}) => async (dispatch, getState) => {
-  const limitQuery = `limit=${limit}`;
+export const getLinks = search => async (dispatch, getState) => {
+  const state = getState();
+  const display = state.itemsMeta.display;
+  const limitQuery = `limit=${display.limit}`;
 
   const searchQuery = search ? `&search=${search}` : "";
 
   const filtersQuery =
-    filters.subjects.length > 0
-      ? `&subjects=in:${filters.subjects.join(",")}`
+    state.filters.subjects.length > 0
+      ? `&subjects=in:${state.filters.subjects.join(",")}`
       : "";
 
-  const orderQuery = orderBy
-    ? `&ordering=${order === "desc" ? "-" + orderBy : orderBy}`
+  const orderQuery = display.orderBy
+    ? `&ordering=${
+        display.order === "desc" ? "-" + display.orderBy : display.orderBy
+      }`
     : "";
 
   const response = await backend.get(
@@ -213,8 +224,8 @@ export const getLinks = ({
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization: getState().auth.user.loggedIn
-          ? `Bearer ${getState().auth.tokens.access}`
+        Authorization: state.auth.user.loggedIn
+          ? `Bearer ${state.auth.tokens.access}`
           : ""
       }
     }

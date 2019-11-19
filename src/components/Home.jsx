@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery/useMediaQuery";
@@ -8,7 +9,12 @@ import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 
 import history from "../history";
-import { getLinks, getNotes } from "../actions";
+import {
+  changeItemsDisplay,
+  getLinks,
+  getNotes,
+  initializeItems
+} from "../actions";
 import SearchBar from "./SearchBar";
 import MobileResults from "./mobile/SearchResults";
 import WebResults from "./web/SearchResults";
@@ -16,6 +22,7 @@ import Modal from "./Modal";
 import AvailableFilters from "./AvailableFilters";
 import { LINKS, NOTES } from "../constants";
 import { getFilterTypeSingular } from "../utils/otherUtils";
+import { defaultState } from "../store";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -65,47 +72,63 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Home({ filters, loggedIn, getNotes, getLinks }) {
+function Home({
+  filters,
+  loggedIn,
+  initializeItems,
+  itemsInitialized,
+  changeItemsDisplay,
+  getNotes,
+  getLinks,
+  location
+}) {
   const theme = useTheme();
   const classes = useStyles();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const filtersCount = filters.subjects.length;
   const [modalOpen, setModalOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("title");
-  const [rowsPerPage, setRowsPerPage] = React.useState(15);
-  const [page, setPage] = React.useState(0);
+
+  useEffect(() => {
+    // download items only on first start OR refresh
+    if (location.state && location.state.refresh) {
+      console.log("home useEffect REFRESH");
+      handleRefresh();
+    } else if (!itemsInitialized) {
+      console.log("home useEffect INIT");
+      downloadItems();
+      initializeItems();
+    }
+  }, [location.key]);
 
   const downloadItems = () => {
     if (filters.type === NOTES) {
-      getNotes({
-        filters,
-        orderBy,
-        order,
-        limit: rowsPerPage,
-        search: searchQuery
-      });
+      getNotes(searchQuery);
     } else if (filters.type === LINKS) {
-      getLinks({
-        filters,
-        orderBy,
-        order,
-        limit: rowsPerPage,
-        search: searchQuery
-      });
+      getLinks(searchQuery);
     }
-    setPage(0);
+    if (!isMobile) {
+      changeItemsDisplay({ page: 0 });
+    }
   };
 
-  useEffect(() => {
-    downloadItems();
-  }, [filters, orderBy, order, rowsPerPage, loggedIn]);
+  const handleRefresh = () => {
+    setSearchQuery("");
+    if (isMobile) {
+      downloadItems();
+    } else {
+      changeItemsDisplay(defaultState.itemsMeta.display);
+    }
+    // clear `refresh` state for current page
+    history.replace({
+      pathname: "/",
+      state: _.omit(location.state, "refresh")
+    });
+  };
 
-  const handleSearchRequest = event => {
-    // remove ordering and initiate its value change, in order for useEffect
-    // to be called
-    setOrderBy(orderBy === "" ? null : "");
+  const handleSearchRequest = () => {
+    changeItemsDisplay({ orderBy: "" });
+    downloadItems();
   };
 
   const handleModalClose = () => {
@@ -191,16 +214,7 @@ function Home({ filters, loggedIn, getNotes, getLinks }) {
         {isMobile ? (
           <MobileResults />
         ) : (
-          <WebResults
-            page={page}
-            order={order}
-            orderBy={orderBy}
-            rowsPerPage={rowsPerPage}
-            setPage={setPage}
-            setOrder={setOrder}
-            setOrderBy={setOrderBy}
-            setRowsPerPage={setRowsPerPage}
-          />
+          <WebResults downloadItems={downloadItems} />
         )}
       </div>
 
@@ -214,14 +228,16 @@ function Home({ filters, loggedIn, getNotes, getLinks }) {
   );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     filters: state.filters,
-    loggedIn: state.auth.user.loggedIn
+    itemsInitialized: state.itemsMeta.initialized,
+    loggedIn: state.auth.user.loggedIn,
+    ...ownProps
   };
 };
 
 export default connect(
   mapStateToProps,
-  { getNotes, getLinks }
+  { getNotes, getLinks, initializeItems, changeItemsDisplay }
 )(Home);

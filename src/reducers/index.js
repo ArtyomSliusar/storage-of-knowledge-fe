@@ -6,6 +6,7 @@ import notesReducer from "./notesReducer";
 import linksReducer from "./linksReducer";
 import snackbarReducer from "./snackbarReducer";
 import itemReducer from "./itemReducer";
+import itemsReducer from "./itemsReducer";
 
 export const reducers = combineReducers({
   auth: authReducer,
@@ -14,5 +15,6 @@ export const reducers = combineReducers({
   notes: notesReducer,
   links: linksReducer,
   openedItem: itemReducer,
+  itemsMeta: itemsReducer,
   snackbar: snackbarReducer
 });

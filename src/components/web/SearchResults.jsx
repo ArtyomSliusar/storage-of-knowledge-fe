@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -9,7 +9,7 @@ import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { connect } from "react-redux";
 
-import { getMoreNotes, getMoreLinks } from "../../actions";
+import { getMoreNotes, getMoreLinks, changeItemsDisplay } from "../../actions";
 import CustomTableHead from "../CustomTableHead";
 import TablePaginationActions from "../TablePaginationActions";
 import { LINKS, NOTES } from "../../constants";
@@ -71,18 +71,24 @@ function SearchResults({
   notes,
   links,
   filters,
+  itemsDisplay,
   getMoreNotes,
   getMoreLinks,
-  page,
-  order,
-  orderBy,
-  rowsPerPage,
-  setPage,
-  setOrder,
-  setOrderBy,
-  setRowsPerPage
+  changeItemsDisplay,
+  downloadItems
 }) {
   const classes = useStyles();
+  const { orderBy, order, limit, page } = itemsDisplay;
+  const [justMounted, setJustMounted] = useState(true);
+
+  useEffect(() => {
+    // download items only on dependencies update
+    if (!justMounted) {
+      console.log("web results useEffect");
+      downloadItems();
+    }
+    setJustMounted(false);
+  }, [filters, orderBy, order, limit]);
 
   const handleRowClick = (event, id) => {
     history.push(`${filters.type}/${id}`);
@@ -90,18 +96,19 @@ function SearchResults({
 
   const handleSortChange = (event, property) => {
     const isDesc = orderBy === property && order === "desc";
-    setOrder(isDesc ? "asc" : "desc");
-    setOrderBy(property);
-    setPage(0);
+    changeItemsDisplay({
+      order: isDesc ? "asc" : "desc",
+      orderBy: property,
+      page: 0
+    });
   };
 
   const handleRowsPerPageChange = event => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    changeItemsDisplay({ limit: parseInt(event.target.value, 10), page: 0 });
   };
 
   const handlePageChange = (event, newPage) => {
-    const requestedItems = newPage * rowsPerPage + rowsPerPage;
+    const requestedItems = newPage * limit + limit;
 
     if (filters.type === NOTES && notes.results.length < requestedItems) {
       getMoreNotes(notes.next);
@@ -112,7 +119,7 @@ function SearchResults({
       getMoreLinks(links.next);
     }
 
-    setPage(newPage);
+    changeItemsDisplay({ page: newPage });
   };
 
   const renderTable = () => {
@@ -143,7 +150,7 @@ function SearchResults({
               />
               <TableBody>
                 {items.results
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .slice(page * limit, page * limit + limit)
                   .map(item => (
                     <TableRow
                       key={item.id}
@@ -171,7 +178,7 @@ function SearchResults({
             rowsPerPageOptions={[15, 25, 50]}
             colSpan={headCells.length}
             count={items.count || 0}
-            rowsPerPage={rowsPerPage}
+            rowsPerPage={limit}
             page={page}
             SelectProps={{
               inputProps: { "aria-label": "rows per page" },
@@ -196,11 +203,12 @@ const mapStateToProps = (state, ownProps) => {
     notes: state.notes,
     links: state.links,
     filters: state.filters,
+    itemsDisplay: state.itemsMeta.display,
     ...ownProps
   };
 };
 
 export default connect(
   mapStateToProps,
-  { getMoreNotes, getMoreLinks }
+  { getMoreNotes, getMoreLinks, changeItemsDisplay }
 )(SearchResults);

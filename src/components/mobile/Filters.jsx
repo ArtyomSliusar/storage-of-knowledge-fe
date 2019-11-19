@@ -6,7 +6,7 @@ export default function Filters() {
   return (
     <AvailableFilters
       onCancel={history.goBack}
-      onApplyCallback={history.goBack}
+      onApplyCallback={() => history.push("/", { refresh: true })}
     />
   );
 }

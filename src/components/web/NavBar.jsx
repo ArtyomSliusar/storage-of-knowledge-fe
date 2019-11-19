@@ -56,7 +56,16 @@ export default function WebNavBar(props) {
     <React.Fragment>
       <AppBar position="static" className={classes.appbar}>
         <Toolbar className={classes.toolbar}>
-          <Button component={AdapterLink} to="/" className={classes.navButton}>
+          <Button
+            component={AdapterLink}
+            to={{
+              pathname: "/",
+              state: {
+                refresh: true
+              }
+            }}
+            className={classes.navButton}
+          >
             <img alt="Logo" src={logo} />
           </Button>
           <span className={classes.separator} />
