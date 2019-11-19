@@ -1,10 +1,8 @@
 import backend from "../apis/backend";
 import {
   APPLY_FILTERS,
-  GET_LINKS,
-  GET_MORE_LINKS,
-  GET_MORE_NOTES,
-  GET_NOTES,
+  GET_ITEMS,
+  GET_MORE_ITEMS,
   GET_USER,
   LOGIN,
   LOGOUT,
@@ -147,7 +145,7 @@ export const closeSnackbar = () => {
   };
 };
 
-export const getNotes = search => async (dispatch, getState) => {
+export const getItems = (search, type) => async (dispatch, getState) => {
   const state = getState();
   const display = state.itemsMeta.display;
   const limitQuery = `limit=${display.limit}`;
@@ -166,7 +164,7 @@ export const getNotes = search => async (dispatch, getState) => {
     : "";
 
   const response = await backend.get(
-    `/notes/?${limitQuery}${filtersQuery}${searchQuery}${orderQuery}`,
+    `/${type}/?${limitQuery}${filtersQuery}${searchQuery}${orderQuery}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -178,12 +176,12 @@ export const getNotes = search => async (dispatch, getState) => {
   );
 
   dispatch({
-    type: GET_NOTES,
+    type: GET_ITEMS,
     payload: { data: response.data }
   });
 };
 
-export const getMoreNotes = url => async (dispatch, getState) => {
+export const getMoreItems = url => async (dispatch, getState) => {
   if (url) {
     const response = await axios.get(url, {
       headers: {
@@ -195,61 +193,7 @@ export const getMoreNotes = url => async (dispatch, getState) => {
     });
 
     dispatch({
-      type: GET_MORE_NOTES,
-      payload: { data: response.data }
-    });
-  }
-};
-
-export const getLinks = search => async (dispatch, getState) => {
-  const state = getState();
-  const display = state.itemsMeta.display;
-  const limitQuery = `limit=${display.limit}`;
-
-  const searchQuery = search ? `&search=${search}` : "";
-
-  const filtersQuery =
-    state.filters.subjects.length > 0
-      ? `&subjects=in:${state.filters.subjects.join(",")}`
-      : "";
-
-  const orderQuery = display.orderBy
-    ? `&ordering=${
-        display.order === "desc" ? "-" + display.orderBy : display.orderBy
-      }`
-    : "";
-
-  const response = await backend.get(
-    `/links/?${limitQuery}${filtersQuery}${searchQuery}${orderQuery}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: state.auth.user.loggedIn
-          ? `Bearer ${state.auth.tokens.access}`
-          : ""
-      }
-    }
-  );
-
-  dispatch({
-    type: GET_LINKS,
-    payload: { data: response.data }
-  });
-};
-
-export const getMoreLinks = url => async (dispatch, getState) => {
-  if (url) {
-    const response = await axios.get(url, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: getState().auth.user.loggedIn
-          ? `Bearer ${getState().auth.tokens.access}`
-          : ""
-      }
-    });
-
-    dispatch({
-      type: GET_MORE_LINKS,
+      type: GET_MORE_ITEMS,
       payload: { data: response.data }
     });
   }

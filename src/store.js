@@ -15,9 +15,97 @@ export const defaultState = {
     subjects: [],
     type: NOTES
   },
-  notes: [],
-  links: [],
+  snackbar: {
+    open: false,
+    message: "",
+    type: INFO
+  },
   openedItem: {},
+  items: [],
+  itemsMeta: {
+    initialized: false,
+    display: {
+      orderBy: "title",
+      order: "asc",
+      limit: 15,
+      page: 0
+    }
+  }
+};
+
+// TODO: use this state structure
+export const flatDefaultState = {
+  subjects: {
+    byId: {
+      "1": {
+        id: "1",
+        name: "Python"
+      }
+    },
+    allIds: ["1", "2"]
+  },
+  types: {
+    byId: {
+      "1": "notes",
+      "2": "links"
+    }
+  },
+  users: {
+    byId: {
+      "1": {
+        username: "artem",
+        email: ""
+      }
+    }
+  },
+  items: {
+    byId: {
+      "1": {
+        id: "1",
+        title: "",
+        subjects: ["1"],
+        user: "1",
+        private: false,
+        likes_count: 1,
+        date_modified: ""
+      }
+    },
+    allIds: ["1", "2"]
+  },
+  auth: {
+    tokens: {},
+    user: {
+      id: "1",
+      loggedIn: true
+    }
+  },
+  filters: {
+    subjects: ["1"],
+    type: "1"
+  },
+  comments: {
+    byId: {
+      id: "1",
+      parent: null,
+      user: "1",
+      note: "1",
+      body: "",
+      reply_set: ["2", "3"],
+      date_created: "",
+      date_modified: ""
+    },
+    allIds: ["1", "2"]
+  },
+  openedItem: {
+    id: "1",
+    title: "",
+    body: "",
+    subjects: ["1"],
+    user: "1",
+    private: true,
+    date_created: "",
+    date_modified: ""
+  },
   snackbar: {
     open: false,
     message: "",
@@ -25,6 +113,9 @@ export const defaultState = {
   },
   itemsMeta: {
     initialized: false,
+    count: 1,
+    next: "",
+    previous: "",
     display: {
       orderBy: "title",
       order: "asc",

@@ -13,7 +13,7 @@ import NoteIcon from "@material-ui/icons/Note";
 import LinkIcon from "@material-ui/icons/Link";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 
-import { getMoreNotes, getMoreLinks } from "../../actions";
+import { getMoreItems } from "../../actions";
 import { LINKS, NOTES } from "../../constants";
 import history from "../../history";
 
@@ -30,30 +30,30 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function SearchResults({ getMoreNotes, getMoreLinks, notes, links, filters }) {
+function SearchResults({ getMoreItems, items, filters }) {
   const classes = useStyles();
 
   const handleItemClick = (event, id) => {
     history.push(`${filters.type}/${id}`);
   };
 
-  const renderNotes = () => {
-    if (notes.results) {
-      return notes.results.map(note => (
-        <ListItem key={note.id} dense={true} button={true}>
+  const renderItems = () => {
+    if (items.results) {
+      return items.results.map(item => (
+        <ListItem key={item.id} dense={true} button={true}>
           <ListItemAvatar className={classes.listItem}>
-            <NoteIcon fontSize="small" />
+            {renderItemIcon()}
           </ListItemAvatar>
           <ListItemText
-            onClick={event => handleItemClick(event, note.id)}
-            primary={note.title}
-            secondary={`${note.user} | ${note.date_modified}`}
+            onClick={event => handleItemClick(event, item.id)}
+            primary={item.title}
+            secondary={`${item.user} | ${item.date_modified}`}
           />
           <ListItemSecondaryAction>
             <IconButton edge="end" size="small">
               <ThumbUpIcon fontSize="small" />
             </IconButton>
-            <div className={classes.likes}>{note.likes_count}</div>
+            <div className={classes.likes}>{item.likes_count}</div>
           </ListItemSecondaryAction>
         </ListItem>
       ));
@@ -62,45 +62,16 @@ function SearchResults({ getMoreNotes, getMoreLinks, notes, links, filters }) {
     }
   };
 
-  const renderLinks = () => {
-    if (links.results) {
-      return links.results.map(link => (
-        <ListItem key={link.id} dense={true} button={true}>
-          <ListItemAvatar className={classes.listItem}>
-            <LinkIcon fontSize="small" />
-          </ListItemAvatar>
-          <ListItemText
-            onClick={event => handleItemClick(event, link.id)}
-            primary={link.title}
-            secondary={`${link.user} | ${link.date_modified}`}
-          />
-          <ListItemSecondaryAction>
-            <IconButton edge="end" size="small">
-              <ThumbUpIcon fontSize="small" />
-            </IconButton>
-            <div className={classes.likes}>{link.likes_count}</div>
-          </ListItemSecondaryAction>
-        </ListItem>
-      ));
-    } else {
-      return [];
-    }
-  };
-
-  const renderResults = () => {
+  const renderItemIcon = () => {
     if (filters.type === NOTES) {
-      return renderNotes();
+      return <NoteIcon fontSize="small" />;
     } else if (filters.type === LINKS) {
-      return renderLinks();
+      return <LinkIcon fontSize="small" />;
     }
   };
 
   const loadMoreItems = () => {
-    if (filters.type === NOTES) {
-      return getMoreNotes(notes.next);
-    } else if (filters.type === LINKS) {
-      return getMoreLinks(links.next);
-    }
+    return getMoreItems(items.next);
   };
 
   const loader = (
@@ -110,11 +81,7 @@ function SearchResults({ getMoreNotes, getMoreLinks, notes, links, filters }) {
   );
 
   const hasMoreItems = () => {
-    if (filters.type === NOTES) {
-      return notes.results && notes.count > notes.results.length;
-    } else if (filters.type === LINKS) {
-      return links.results && links.count > links.results.length;
-    }
+    return items.results && items.count > items.results.length;
   };
 
   return (
@@ -124,20 +91,19 @@ function SearchResults({ getMoreNotes, getMoreLinks, notes, links, filters }) {
       hasMore={hasMoreItems()}
       loader={loader}
     >
-      <List>{renderResults()}</List>
+      <List>{renderItems()}</List>
     </InfiniteScroll>
   );
 }
 
 const mapStateToProps = state => {
   return {
-    notes: state.notes,
-    links: state.links,
+    items: state.items,
     filters: state.filters
   };
 };
 
 export default connect(
   mapStateToProps,
-  { getMoreNotes, getMoreLinks }
+  { getMoreItems }
 )(SearchResults);

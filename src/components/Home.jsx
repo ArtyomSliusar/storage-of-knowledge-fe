@@ -9,12 +9,7 @@ import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 
 import history from "../history";
-import {
-  changeItemsDisplay,
-  getLinks,
-  getNotes,
-  initializeItems
-} from "../actions";
+import { changeItemsDisplay, getItems, initializeItems } from "../actions";
 import SearchBar from "./SearchBar";
 import MobileResults from "./mobile/SearchResults";
 import WebResults from "./web/SearchResults";
@@ -78,8 +73,7 @@ function Home({
   initializeItems,
   itemsInitialized,
   changeItemsDisplay,
-  getNotes,
-  getLinks,
+  getItems,
   location
 }) {
   const theme = useTheme();
@@ -100,11 +94,7 @@ function Home({
   }, [location.key]);
 
   const downloadItems = () => {
-    if (filters.type === NOTES) {
-      getNotes(searchQuery);
-    } else if (filters.type === LINKS) {
-      getLinks(searchQuery);
-    }
+    getItems(searchQuery, filters.type);
     if (!isMobile) {
       changeItemsDisplay({ page: 0 });
     }
@@ -237,5 +227,5 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
   mapStateToProps,
-  { getNotes, getLinks, initializeItems, changeItemsDisplay }
+  { getItems, initializeItems, changeItemsDisplay }
 )(Home);

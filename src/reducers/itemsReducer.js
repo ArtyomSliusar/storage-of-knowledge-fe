@@ -1,16 +1,13 @@
-import { CHANGE_ITEMS_DISPLAY, INITIALIZE_ITEMS } from "../constants";
+import { GET_MORE_ITEMS, GET_ITEMS } from "../constants";
 
 export default (state = {}, action) => {
   switch (action.type) {
-    case INITIALIZE_ITEMS:
+    case GET_ITEMS:
+      return action.payload.data;
+    case GET_MORE_ITEMS:
       return {
-        ...state,
-        initialized: true
-      };
-    case CHANGE_ITEMS_DISPLAY:
-      return {
-        ...state,
-        display: { ...state.display, ...action.payload.display }
+        ...action.payload.data,
+        results: [...state.results, ...action.payload.data.results]
       };
     default:
       return state;

@@ -9,7 +9,7 @@ import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { connect } from "react-redux";
 
-import { getMoreNotes, getMoreLinks, changeItemsDisplay } from "../../actions";
+import { getMoreItems, changeItemsDisplay } from "../../actions";
 import CustomTableHead from "../CustomTableHead";
 import TablePaginationActions from "../TablePaginationActions";
 import { LINKS, NOTES } from "../../constants";
@@ -68,12 +68,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function SearchResults({
-  notes,
-  links,
+  items,
   filters,
   itemsDisplay,
-  getMoreNotes,
-  getMoreLinks,
+  getMoreItems,
   changeItemsDisplay,
   downloadItems
 }) {
@@ -109,26 +107,18 @@ function SearchResults({
   const handlePageChange = (event, newPage) => {
     const requestedItems = newPage * limit + limit;
 
-    if (filters.type === NOTES && notes.results.length < requestedItems) {
-      getMoreNotes(notes.next);
-    } else if (
-      filters.type === LINKS &&
-      links.results.length < requestedItems
-    ) {
-      getMoreLinks(links.next);
+    if (items.results.length < requestedItems) {
+      getMoreItems(items.next);
     }
 
     changeItemsDisplay({ page: newPage });
   };
 
   const renderTable = () => {
-    let items = {};
     let icon;
     if (filters.type === NOTES) {
-      items = notes;
       icon = <NoteIcon fontSize="small" className={classes.itemIcon} />;
     } else if (filters.type === LINKS) {
-      items = links;
       icon = <LinkIcon fontSize="small" className={classes.itemIcon} />;
     }
     if (items.results) {
@@ -199,8 +189,7 @@ function SearchResults({
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    notes: state.notes,
-    links: state.links,
+    items: state.items,
     filters: state.filters,
     itemsDisplay: state.itemsMeta.display,
     ...ownProps
@@ -209,5 +198,5 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
   mapStateToProps,
-  { getMoreNotes, getMoreLinks, changeItemsDisplay }
+  { getMoreItems, changeItemsDisplay }
 )(SearchResults);
