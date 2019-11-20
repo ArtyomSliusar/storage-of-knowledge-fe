@@ -29,7 +29,7 @@ function UserMenu(props) {
         onClick={handleClick}
       >
         <AccountCircle style={{ marginRight: theme.spacing(1) }} />
-        {props.username || "user"}
+        {props.currentUser ? props.currentUser.username : "user"}
       </Button>
       <Menu
         id="simple-menu"
@@ -57,7 +57,7 @@ UserMenu.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    username: state.auth.user.username
+    currentUser: state.users.byId[state.auth.user.id]
   };
 };
 

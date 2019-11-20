@@ -20,9 +20,20 @@ export const defaultState = {
     message: "",
     type: INFO
   },
+  subjects: {
+    byId: {},
+    allIds: []
+  },
+  users: {
+    byId: {}
+  },
   openedItem: {},
-  items: [],
+  items: {
+    byId: {},
+    allIds: []
+  },
   itemsMeta: {
+    refreshNeeded: false,
     initialized: false,
     display: {
       orderBy: "title",
@@ -53,8 +64,7 @@ export const flatDefaultState = {
   users: {
     byId: {
       "1": {
-        username: "artem",
-        email: ""
+        username: "artem"
       }
     }
   },
@@ -76,6 +86,7 @@ export const flatDefaultState = {
     tokens: {},
     user: {
       id: "1",
+      email: "",
       loggedIn: true
     }
   },

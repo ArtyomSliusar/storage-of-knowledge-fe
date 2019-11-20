@@ -7,8 +7,9 @@ import Button from "@material-ui/core/Button";
 import logo from "../../logo.svg";
 import UserMenu from "./UserMenu";
 import Contact from "./Contact";
-import AdapterLink from "../AdapterLink";
 import history from "../../history";
+import { setRefreshNeeded } from "../../actions";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles(theme => ({
   appbar: {
@@ -32,8 +33,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function WebNavBar(props) {
-  const { items, loggedIn } = props;
+function WebNavBar(props) {
+  const { items, loggedIn, setRefreshNeeded } = props;
   const [contactModalOpen, setContactModalOpen] = React.useState(false);
   const classes = useStyles();
 
@@ -57,12 +58,9 @@ export default function WebNavBar(props) {
       <AppBar position="static" className={classes.appbar}>
         <Toolbar className={classes.toolbar}>
           <Button
-            component={AdapterLink}
-            to={{
-              pathname: "/",
-              state: {
-                refresh: true
-              }
+            onClick={() => {
+              setRefreshNeeded(true);
+              history.push("/");
             }}
             className={classes.navButton}
           >
@@ -86,3 +84,8 @@ export default function WebNavBar(props) {
     </React.Fragment>
   );
 }
+
+export default connect(
+  null,
+  { setRefreshNeeded }
+)(WebNavBar);

@@ -5,7 +5,7 @@ import "easymde/dist/easymde.min.css";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 import history from "../history";
-import { getItem, openSnackbar, updateLink } from "../actions";
+import { getItem, openSnackbar, updateItem } from "../actions";
 import { LINKS, SUCCESS } from "../constants";
 import ItemForm from "./ItemForm";
 
@@ -18,9 +18,9 @@ const useStyles = makeStyles(theme => ({
 function LinkEdit({
   linkId,
   linkDetails,
-  user,
+  currentUser,
   getItem,
-  updateLink,
+  updateItem,
   openSnackbar
 }) {
   const classes = useStyles();
@@ -30,7 +30,7 @@ function LinkEdit({
   }, []);
 
   const handleSave = formValues => {
-    return updateLink(linkId, formValues);
+    return updateItem(linkId, formValues, LINKS);
   };
 
   const handleSaveSuccess = () => {
@@ -45,8 +45,8 @@ function LinkEdit({
   const renderLink = () => {
     if (
       linkDetails &&
-      user.loggedIn &&
-      user.username === linkDetails.username
+      currentUser.loggedIn &&
+      currentUser.id === linkDetails.author
     ) {
       return (
         <ItemForm
@@ -70,14 +70,14 @@ function LinkEdit({
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    linkDetails: state.links.linkDetails,
+    linkDetails: state.openedItem.details,
     linkId: ownProps.match.params.id,
-    user: state.auth.user,
+    currentUser: state.auth.user,
     ...ownProps
   };
 };
 
 export default connect(
   mapStateToProps,
-  { getItem, updateLink, openSnackbar }
+  { getItem, updateItem, openSnackbar }
 )(LinkEdit);

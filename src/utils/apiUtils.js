@@ -21,14 +21,6 @@ export function contact(name, email, message, recaptcha) {
   );
 }
 
-export function getSubjects() {
-  return backend.get("/subjects/", {
-    headers: {
-      "Content-Type": "application/json"
-    }
-  });
-}
-
 export function getSuggestions(filters, query) {
   return backend.get(`/suggestions/?query=${query}&index=${filters.type}`, {
     headers: {

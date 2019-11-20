@@ -30,7 +30,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function SearchResults({ getMoreItems, items, filters }) {
+function SearchResults({
+  getMoreItems,
+  items,
+  filters,
+  users,
+  itemsNext,
+  itemsCount
+}) {
   const classes = useStyles();
 
   const handleItemClick = (event, id) => {
@@ -38,25 +45,29 @@ function SearchResults({ getMoreItems, items, filters }) {
   };
 
   const renderItems = () => {
-    if (items.results) {
-      return items.results.map(item => (
-        <ListItem key={item.id} dense={true} button={true}>
-          <ListItemAvatar className={classes.listItem}>
-            {renderItemIcon()}
-          </ListItemAvatar>
-          <ListItemText
-            onClick={event => handleItemClick(event, item.id)}
-            primary={item.title}
-            secondary={`${item.user} | ${item.date_modified}`}
-          />
-          <ListItemSecondaryAction>
-            <IconButton edge="end" size="small">
-              <ThumbUpIcon fontSize="small" />
-            </IconButton>
-            <div className={classes.likes}>{item.likes_count}</div>
-          </ListItemSecondaryAction>
-        </ListItem>
-      ));
+    if (items.allIds) {
+      return items.allIds.map(itemId => {
+        const item = items.byId[itemId];
+        const username = users.byId[item.author].username;
+        return (
+          <ListItem key={itemId} dense={true} button={true}>
+            <ListItemAvatar className={classes.listItem}>
+              {renderItemIcon()}
+            </ListItemAvatar>
+            <ListItemText
+              onClick={event => handleItemClick(event, itemId)}
+              primary={item.title}
+              secondary={`${username} | ${item.date_modified}`}
+            />
+            <ListItemSecondaryAction>
+              <IconButton edge="end" size="small">
+                <ThumbUpIcon fontSize="small" />
+              </IconButton>
+              <div className={classes.likes}>{item.likes_count}</div>
+            </ListItemSecondaryAction>
+          </ListItem>
+        );
+      });
     } else {
       return [];
     }
@@ -71,7 +82,7 @@ function SearchResults({ getMoreItems, items, filters }) {
   };
 
   const loadMoreItems = () => {
-    return getMoreItems(items.next);
+    return getMoreItems(itemsNext);
   };
 
   const loader = (
@@ -81,7 +92,7 @@ function SearchResults({ getMoreItems, items, filters }) {
   );
 
   const hasMoreItems = () => {
-    return items.results && items.count > items.results.length;
+    return items.allIds && itemsCount > items.allIds.length;
   };
 
   return (
@@ -99,7 +110,10 @@ function SearchResults({ getMoreItems, items, filters }) {
 const mapStateToProps = state => {
   return {
     items: state.items,
-    filters: state.filters
+    filters: state.filters,
+    users: state.users,
+    itemsNext: state.itemsMeta.next,
+    itemsCount: state.itemsMeta.count
   };
 };
 

@@ -1,4 +1,3 @@
-import * as _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery/useMediaQuery";
@@ -9,13 +8,17 @@ import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 
 import history from "../history";
-import { changeItemsDisplay, getItems, initializeItems } from "../actions";
+import {
+  changeItemsDisplay,
+  getItems,
+  initializeItems,
+  setRefreshNeeded
+} from "../actions";
 import SearchBar from "./SearchBar";
 import MobileResults from "./mobile/SearchResults";
 import WebResults from "./web/SearchResults";
 import Modal from "./Modal";
 import AvailableFilters from "./AvailableFilters";
-import { LINKS, NOTES } from "../constants";
 import { getFilterTypeSingular } from "../utils/otherUtils";
 import { defaultState } from "../store";
 
@@ -72,7 +75,9 @@ function Home({
   loggedIn,
   initializeItems,
   itemsInitialized,
+  refreshNeeded,
   changeItemsDisplay,
+  setRefreshNeeded,
   getItems,
   location
 }) {
@@ -85,7 +90,7 @@ function Home({
 
   useEffect(() => {
     // download items only on first start OR refresh
-    if (location.state && location.state.refresh) {
+    if (refreshNeeded) {
       handleRefresh();
     } else if (!itemsInitialized) {
       downloadItems();
@@ -105,13 +110,10 @@ function Home({
     if (isMobile) {
       downloadItems();
     } else {
+      downloadItems();
       changeItemsDisplay(defaultState.itemsMeta.display);
     }
-    // clear `refresh` state for current page
-    history.replace({
-      pathname: "/",
-      state: _.omit(location.state, "refresh")
-    });
+    setRefreshNeeded(false);
   };
 
   const handleSearchRequest = () => {
@@ -220,6 +222,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     filters: state.filters,
     itemsInitialized: state.itemsMeta.initialized,
+    refreshNeeded: state.itemsMeta.refreshNeeded,
     loggedIn: state.auth.user.loggedIn,
     ...ownProps
   };
@@ -227,5 +230,5 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
   mapStateToProps,
-  { getItems, initializeItems, changeItemsDisplay }
+  { getItems, initializeItems, changeItemsDisplay, setRefreshNeeded }
 )(Home);

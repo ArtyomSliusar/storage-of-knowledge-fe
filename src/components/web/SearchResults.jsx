@@ -70,13 +70,15 @@ const useStyles = makeStyles(theme => ({
 function SearchResults({
   items,
   filters,
-  itemsDisplay,
+  itemsMeta,
+  users,
+  subjects,
   getMoreItems,
   changeItemsDisplay,
   downloadItems
 }) {
   const classes = useStyles();
-  const { orderBy, order, limit, page } = itemsDisplay;
+  const { orderBy, order, limit, page } = itemsMeta.display;
   const [justMounted, setJustMounted] = useState(true);
 
   useEffect(() => {
@@ -107,8 +109,8 @@ function SearchResults({
   const handlePageChange = (event, newPage) => {
     const requestedItems = newPage * limit + limit;
 
-    if (items.results.length < requestedItems) {
-      getMoreItems(items.next);
+    if (items.allIds.length < requestedItems) {
+      getMoreItems(itemsMeta.next);
     }
 
     changeItemsDisplay({ page: newPage });
@@ -121,7 +123,7 @@ function SearchResults({
     } else if (filters.type === LINKS) {
       icon = <LinkIcon fontSize="small" className={classes.itemIcon} />;
     }
-    if (items.results) {
+    if (items.allIds) {
       return (
         <div className={classes.wrapper}>
           <div className={classes.tableWrapper}>
@@ -138,26 +140,35 @@ function SearchResults({
                 headCells={headCells}
               />
               <TableBody>
-                {items.results
+                {items.allIds
                   .slice(page * limit, page * limit + limit)
-                  .map(item => (
-                    <TableRow
-                      key={item.id}
-                      hover
-                      onClick={event => handleRowClick(event, item.id)}
-                    >
-                      <TableCell align="left">
-                        {icon}
-                        {item.title}
-                      </TableCell>
-                      <TableCell align="right">
-                        {item.subjects.join(" | ")}
-                      </TableCell>
-                      <TableCell align="right">{item.user}</TableCell>
-                      <TableCell align="right">{item.likes_count}</TableCell>
-                      <TableCell align="right">{item.date_modified}</TableCell>
-                    </TableRow>
-                  ))}
+                  .map(itemId => {
+                    const item = items.byId[itemId];
+                    const username = users.byId[item.author].username;
+                    const itemSubjects = item.subjects.map(
+                      id => subjects.byId[id].name
+                    );
+                    return (
+                      <TableRow
+                        key={itemId}
+                        hover
+                        onClick={event => handleRowClick(event, itemId)}
+                      >
+                        <TableCell align="left">
+                          {icon}
+                          {item.title}
+                        </TableCell>
+                        <TableCell align="right">
+                          {itemSubjects.join(" | ")}
+                        </TableCell>
+                        <TableCell align="right">{username}</TableCell>
+                        <TableCell align="right">{item.likes_count}</TableCell>
+                        <TableCell align="right">
+                          {item.date_modified}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
               </TableBody>
             </Table>
           </div>
@@ -166,7 +177,7 @@ function SearchResults({
             component="div"
             rowsPerPageOptions={[15, 25, 50]}
             colSpan={headCells.length}
-            count={items.count || 0}
+            count={itemsMeta.count || 0}
             rowsPerPage={limit}
             page={page}
             SelectProps={{
@@ -191,7 +202,9 @@ const mapStateToProps = (state, ownProps) => {
   return {
     items: state.items,
     filters: state.filters,
-    itemsDisplay: state.itemsMeta.display,
+    itemsMeta: state.itemsMeta,
+    users: state.users,
+    subjects: state.subjects,
     ...ownProps
   };
 };

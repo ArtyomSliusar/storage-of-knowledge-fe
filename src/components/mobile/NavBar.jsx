@@ -12,6 +12,9 @@ import logo from "../../logo.svg";
 import ListItem from "@material-ui/core/ListItem";
 import IconButton from "@material-ui/core/IconButton";
 import AdapterLink from "../AdapterLink";
+import history from "../../history";
+import { connect } from "react-redux";
+import { setRefreshNeeded } from "../../actions";
 
 const drawerWidth = 240;
 
@@ -36,8 +39,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MobileNavBar(props) {
-  const { container, items, loggedIn } = props;
+function MobileNavBar(props) {
+  const { container, items, loggedIn, setRefreshNeeded } = props;
   const classes = useStyles();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
@@ -84,12 +87,9 @@ export default function MobileNavBar(props) {
       <AppBar position="static">
         <Toolbar className={classes.toolbar}>
           <Button
-            component={AdapterLink}
-            to={{
-              pathname: "/",
-              state: {
-                refresh: true
-              }
+            onClick={() => {
+              setRefreshNeeded(true);
+              history.push("/");
             }}
           >
             <img alt="Logo" src={logo} />
@@ -145,3 +145,8 @@ export default function MobileNavBar(props) {
     </React.Fragment>
   );
 }
+
+export default connect(
+  null,
+  { setRefreshNeeded }
+)(MobileNavBar);

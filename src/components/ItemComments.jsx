@@ -51,7 +51,8 @@ function ItemComments({
   itemComments,
   itemId,
   itemType,
-  user
+  currentUser,
+  loggedIn
 }) {
   const classes = useStyles();
   const prefixId = "reply-for-";
@@ -84,7 +85,7 @@ function ItemComments({
   };
 
   const handleFormOpen = formId => {
-    if (user.loggedIn) {
+    if (loggedIn) {
       document.getElementById(formId).hidden = false;
     } else {
       history.push("/login");
@@ -101,7 +102,7 @@ function ItemComments({
   };
 
   const renderForm = (parentId, handleCancel, hidden = false) => {
-    if (user.loggedIn) {
+    if (loggedIn) {
       return (
         <form
           id={`${prefixId}${parentId}`}
@@ -148,7 +149,7 @@ function ItemComments({
     if (itemComments && itemComments.length > 0) {
       return (
         <CommentList
-          username={user.username}
+          username={currentUser && currentUser.username}
           comments={itemComments}
           classes={classes}
           prefixId={prefixId}
@@ -172,7 +173,8 @@ function ItemComments({
 const mapStateToProps = (state, ownProps) => {
   return {
     itemComments: state.openedItem.comments,
-    user: state.auth.user,
+    currentUser: state.users.byId[state.auth.user.id],
+    loggedIn: state.auth.user.loggedIn,
     ...ownProps
   };
 };

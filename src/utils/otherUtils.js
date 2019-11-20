@@ -1,6 +1,17 @@
 import { LINKS, NOTES } from "../constants";
 import store from "../store";
 
+function getRequestHeaders(auth = true, contentType = "application/json") {
+  const state = store.getState();
+  let headers = {
+    "Content-Type": contentType
+  };
+  if (auth && state.auth.user.loggedIn) {
+    headers["Authorization"] = `Bearer ${state.auth.tokens.access}`;
+  }
+  return headers;
+}
+
 function setLocalStorageState(state) {
   try {
     localStorage.setItem(
@@ -49,20 +60,21 @@ function getInitialState(defaultState) {
   return initialState;
 }
 
-const getFilterTypeSingular = () => {
+const getFilterTypeSingular = (startWithCapital = false) => {
   const type = store.getState().filters.type;
+  let name = "";
   if (type === NOTES) {
-    return "note";
+    name = "note";
   } else if (type === LINKS) {
-    return " link";
-  } else {
-    return null;
+    name = "link";
   }
+  return startWithCapital ? name.charAt(0).toUpperCase() + name.slice(1) : name;
 };
 
 export {
   setLocalStorageState,
   getInitialState,
   getTokenPayload,
-  getFilterTypeSingular
+  getFilterTypeSingular,
+  getRequestHeaders
 };

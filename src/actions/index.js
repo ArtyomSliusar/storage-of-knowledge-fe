@@ -1,4 +1,6 @@
 import backend from "../apis/backend";
+import * as _ from "lodash";
+import { normalize } from "normalizr";
 import {
   APPLY_FILTERS,
   GET_ITEMS,
@@ -18,10 +20,17 @@ import {
   ADD_ITEM_COMMENT,
   DELETE_ITEM_COMMENT,
   INITIALIZE_ITEMS,
-  CHANGE_ITEMS_DISPLAY
+  CHANGE_ITEMS_DISPLAY,
+  GET_SUBJECTS,
+  NOTES,
+  LINKS,
+  SET_REFRESH_NEEDED,
+  GET_ITEM_LIKE
 } from "../constants";
 import history from "../history";
 import axios from "axios";
+import { item, subject, user } from "../shemas";
+import { getRequestHeaders } from "../utils/otherUtils";
 
 // TODO: DRY
 
@@ -33,9 +42,7 @@ export const login = (username, password) => async dispatch => {
       password: password
     },
     {
-      headers: {
-        "Content-Type": "application/json"
-      }
+      headers: getRequestHeaders()
     }
   );
 
@@ -53,10 +60,7 @@ export const logout = () => async (dispatch, getState) => {
         refresh: getState().auth.tokens.refresh
       },
       {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getState().auth.tokens.access}`
-        }
+        headers: getRequestHeaders()
       }
     )
     .catch(error => {
@@ -87,9 +91,7 @@ export const register = (
       recaptcha: recaptcha
     },
     {
-      headers: {
-        "Content-Type": "application/json"
-      }
+      headers: getRequestHeaders(false)
     }
   );
 
@@ -98,17 +100,17 @@ export const register = (
   });
 };
 
-export const getUser = userId => async (dispatch, getState) => {
+export const getUser = userId => async dispatch => {
   const response = await backend.get(`/users/${userId}/`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getState().auth.tokens.access}`
-    }
+    headers: getRequestHeaders()
   });
+
+  const { id, username, ...userMeta } = response.data;
+  const data = normalize({ id, username }, user);
 
   dispatch({
     type: GET_USER,
-    payload: { data: response.data }
+    payload: { users: data.entities.users, userMeta: userMeta }
   });
 };
 
@@ -132,6 +134,13 @@ export const initializeItems = () => {
   };
 };
 
+export const setRefreshNeeded = value => {
+  return {
+    type: SET_REFRESH_NEEDED,
+    payload: { value: value }
+  };
+};
+
 export const changeItemsDisplay = params => {
   return {
     type: CHANGE_ITEMS_DISPLAY,
@@ -143,6 +152,19 @@ export const closeSnackbar = () => {
   return {
     type: CLOSE_SNACKBAR
   };
+};
+
+export const getSubjects = () => async dispatch => {
+  const response = await backend.get("/subjects/", {
+    headers: getRequestHeaders(false)
+  });
+
+  const data = normalize(response.data, [subject]);
+
+  dispatch({
+    type: GET_SUBJECTS,
+    payload: { allIds: data.result, byId: data.entities.subjects }
+  });
 };
 
 export const getItems = (search, type) => async (dispatch, getState) => {
@@ -166,113 +188,101 @@ export const getItems = (search, type) => async (dispatch, getState) => {
   const response = await backend.get(
     `/${type}/?${limitQuery}${filtersQuery}${searchQuery}${orderQuery}`,
     {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: state.auth.user.loggedIn
-          ? `Bearer ${state.auth.tokens.access}`
-          : ""
-      }
+      headers: getRequestHeaders()
     }
   );
 
+  const resultsData = normalize(response.data.results, [item]);
+  const { count, next, previous } = response.data;
+
   dispatch({
     type: GET_ITEMS,
-    payload: { data: response.data }
+    payload: {
+      allIds: resultsData.result,
+      byId: resultsData.entities.items,
+      users: resultsData.entities.users,
+      subjects: resultsData.entities.subjects,
+      meta: { count, next, previous }
+    }
   });
 };
 
-export const getMoreItems = url => async (dispatch, getState) => {
+export const getMoreItems = url => async dispatch => {
   if (url) {
     const response = await axios.get(url, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: getState().auth.user.loggedIn
-          ? `Bearer ${getState().auth.tokens.access}`
-          : ""
-      }
+      headers: getRequestHeaders()
     });
+
+    const resultsData = normalize(response.data.results, [item]);
+    const { count, next, previous } = response.data;
 
     dispatch({
       type: GET_MORE_ITEMS,
-      payload: { data: response.data }
+      payload: {
+        allIds: resultsData.result,
+        byId: resultsData.entities.items,
+        users: resultsData.entities.users,
+        subjects: resultsData.entities.subjects,
+        meta: { count, next, previous }
+      }
     });
   }
 };
 
-export const getItem = (id, type) => async (dispatch, getState) => {
+export const getItem = (id, type) => async dispatch => {
   const response = await backend.get(`/${type}/${id}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: getState().auth.user.loggedIn
-        ? `Bearer ${getState().auth.tokens.access}`
-        : ""
-    }
+    headers: getRequestHeaders()
   });
+
+  const data = normalize(response.data, item);
 
   dispatch({
     type: GET_ITEM_DETAILS,
-    payload: { data: response.data }
+    payload: {
+      details: data.entities.items[id],
+      users: data.entities.users,
+      subjects: data.entities.subjects
+    }
   });
 };
 
-export const updateNote = (noteId, noteData) => async (dispatch, getState) => {
-  const response = await backend.put(
-    `/notes/${noteId}`,
-    {
-      title: noteData.title,
-      subjects: noteData.subjects,
-      private: noteData.private,
-      body: noteData.body
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: getState().auth.user.loggedIn
-          ? `Bearer ${getState().auth.tokens.access}`
-          : ""
-      }
-    }
+export const updateItem = (itemId, itemData, itemType) => async (
+  dispatch,
+  getState
+) => {
+  const state = getState();
+  const subjects_ids = itemData.subjects.map(subjectName =>
+    _.findKey(state.subjects.byId, { name: subjectName })
   );
+  let data = {
+    title: itemData.title,
+    subjects_ids: subjects_ids,
+    private: itemData.private
+  };
+
+  if (itemType === NOTES) {
+    data["body"] = itemData.body;
+  } else if (itemType === LINKS) {
+    data["link"] = itemData.link;
+  }
+
+  const response = await backend.put(`/${itemType}/${itemId}`, data, {
+    headers: getRequestHeaders()
+  });
+
+  const responseData = normalize(response.data, item);
 
   dispatch({
     type: UPDATE_ITEM,
-    payload: { data: response.data }
+    payload: {
+      data: responseData.entities.items[itemId]
+    }
   });
 };
 
-export const updateLink = (linkId, linkData) => async (dispatch, getState) => {
-  const response = await backend.put(
-    `/links/${linkId}`,
-    {
-      title: linkData.title,
-      subjects: linkData.subjects,
-      private: linkData.private,
-      link: linkData.link
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: getState().auth.user.loggedIn
-          ? `Bearer ${getState().auth.tokens.access}`
-          : ""
-      }
-    }
-  );
-
-  dispatch({
-    type: UPDATE_ITEM,
-    payload: { data: response.data }
-  });
-};
-
-export const deleteNote = noteId => async (dispatch, getState) => {
-  await backend.delete(`/notes/${noteId}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: getState().auth.user.loggedIn
-        ? `Bearer ${getState().auth.tokens.access}`
-        : ""
-    }
+export const deleteItem = (itemId, itemType) => async dispatch => {
+  await backend.delete(`/${itemType}/${itemId}`, {
+    headers: getRequestHeaders()
   });
 
   dispatch({
@@ -280,133 +290,72 @@ export const deleteNote = noteId => async (dispatch, getState) => {
   });
 };
 
-export const deleteLink = linkId => async (dispatch, getState) => {
-  await backend.delete(`/links/${linkId}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: getState().auth.user.loggedIn
-        ? `Bearer ${getState().auth.tokens.access}`
-        : ""
-    }
-  });
-
-  dispatch({
-    type: DELETE_ITEM
-  });
-};
-
-export const createNote = noteData => async (dispatch, getState) => {
-  // no redux state update
-  return await backend.post(
-    `/notes/`,
-    {
-      title: noteData.title,
-      subjects: noteData.subjects,
-      private: noteData.private,
-      body: noteData.body
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: getState().auth.user.loggedIn
-          ? `Bearer ${getState().auth.tokens.access}`
-          : ""
-      }
-    }
+export const createItem = (itemData, itemType) => async (
+  dispatch,
+  getState
+) => {
+  const state = getState();
+  const subjects_ids = itemData.subjects.map(subjectName =>
+    _.findKey(state.subjects.byId, { name: subjectName })
   );
-};
+  const data = {
+    title: itemData.title,
+    subjects_ids: subjects_ids,
+    private: itemData.private
+  };
+  if (itemType === NOTES) {
+    data["body"] = itemData.body;
+  } else if (itemType === LINKS) {
+    data["link"] = itemData.link;
+  }
 
-export const createLink = linkData => async (dispatch, getState) => {
-  // no redux state update
-  return await backend.post(
-    `/links/`,
-    {
-      title: linkData.title,
-      subjects: linkData.subjects,
-      private: linkData.private,
-      link: linkData.link
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: getState().auth.user.loggedIn
-          ? `Bearer ${getState().auth.tokens.access}`
-          : ""
-      }
-    }
-  );
+  return await backend.post(`/${itemType}/`, data, {
+    headers: getRequestHeaders()
+  });
 };
 
 export const getItemLike = (id, type) => async (dispatch, getState) => {
   const userFilter = `?user=${getState().auth.user.id}`;
 
   const response = await backend.get(`/${type}/${id}/likes/${userFilter}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: getState().auth.user.loggedIn
-        ? `Bearer ${getState().auth.tokens.access}`
-        : ""
-    }
+    headers: getRequestHeaders()
   });
 
-  if (response.data.length > 0) {
-    dispatch({
-      type: ADD_ITEM_LIKE,
-      payload: { data: response.data[0] } // with user filter we should have only one like per item
-    });
-  } else {
-    dispatch({
-      type: DELETE_ITEM_LIKE
-    });
-  }
+  dispatch({
+    type: GET_ITEM_LIKE,
+    payload: { data: response.data }
+  });
 };
 
-export const addItemLike = (id, type) => async (dispatch, getState) => {
+export const addItemLike = (id, type) => async dispatch => {
   const response = await backend.post(
     `/${type}/${id}/likes/`,
     {},
     {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: getState().auth.user.loggedIn
-          ? `Bearer ${getState().auth.tokens.access}`
-          : ""
-      }
+      headers: getRequestHeaders()
     }
   );
 
   dispatch({
     type: ADD_ITEM_LIKE,
-    payload: { data: response.data }
+    payload: { data: response.data, itemId: id }
   });
 };
 
-export const deleteItemLike = (id, type, likeId) => async (
-  dispatch,
-  getState
-) => {
+export const deleteItemLike = (id, type, likeId) => async dispatch => {
   await backend.delete(`/${type}/${id}/likes/${likeId}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: getState().auth.user.loggedIn
-        ? `Bearer ${getState().auth.tokens.access}`
-        : ""
-    }
+    headers: getRequestHeaders()
   });
 
   dispatch({
-    type: DELETE_ITEM_LIKE
+    type: DELETE_ITEM_LIKE,
+    payload: { itemId: id }
   });
 };
 
-export const getItemComments = (id, itemType) => async (dispatch, getState) => {
+export const getItemComments = (id, itemType) => async dispatch => {
   const response = await backend.get(`/${itemType}/${id}/comments/`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: getState().auth.user.loggedIn
-        ? `Bearer ${getState().auth.tokens.access}`
-        : ""
-    }
+    headers: getRequestHeaders()
   });
 
   dispatch({
@@ -415,10 +364,12 @@ export const getItemComments = (id, itemType) => async (dispatch, getState) => {
   });
 };
 
-export const addItemComment = (id, type, body, parentId = null) => async (
-  dispatch,
-  getState
-) => {
+export const addItemComment = (
+  id,
+  type,
+  body,
+  parentId = null
+) => async dispatch => {
   await backend.post(
     `/${type}/${id}/comments/`,
     {
@@ -426,12 +377,7 @@ export const addItemComment = (id, type, body, parentId = null) => async (
       parent: parentId
     },
     {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: getState().auth.user.loggedIn
-          ? `Bearer ${getState().auth.tokens.access}`
-          : ""
-      }
+      headers: getRequestHeaders()
     }
   );
 
@@ -440,17 +386,9 @@ export const addItemComment = (id, type, body, parentId = null) => async (
   });
 };
 
-export const deleteItemComment = (id, type, commentId) => async (
-  dispatch,
-  getState
-) => {
+export const deleteItemComment = (id, type, commentId) => async dispatch => {
   await backend.delete(`/${type}/${id}/comments/${commentId}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: getState().auth.user.loggedIn
-        ? `Bearer ${getState().auth.tokens.access}`
-        : ""
-    }
+    headers: getRequestHeaders()
   });
 
   dispatch({

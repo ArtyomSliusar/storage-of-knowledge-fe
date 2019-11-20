@@ -3,10 +3,11 @@ import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 import "easymde/dist/easymde.min.css";
 
-import { deleteLink, deleteNote, openSnackbar } from "../actions";
+import { deleteItem, openSnackbar, setRefreshNeeded } from "../actions";
 import history from "../history";
-import { ERROR, LINKS, NOTES, SUCCESS } from "../constants";
+import { ERROR, SUCCESS } from "../constants";
 import { makeStyles } from "@material-ui/core";
+import { getFilterTypeSingular } from "../utils/otherUtils";
 
 const useStyles = makeStyles(theme => ({
   question: {
@@ -22,50 +23,32 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ItemDelete({
-  deleteNote,
-  deleteLink,
+  deleteItem,
   openSnackbar,
+  setRefreshNeeded,
   onClose,
   itemId,
   itemType
 }) {
   const classes = useStyles();
 
-  const reprItemType = () => {
-    if (itemType === NOTES) {
-      return "note";
-    } else if (itemType === LINKS) {
-      return "link";
-    }
-  };
-
   const handleDelete = () => {
-    if (itemType === NOTES) {
-      deleteNote(itemId)
-        .then(() => {
-          openSnackbar("Note deleted", SUCCESS);
-          history.push("/");
-        })
-        .catch(error => {
-          openSnackbar(error.toString(), ERROR);
-        });
-    } else if (itemType === LINKS) {
-      deleteLink(itemId)
-        .then(() => {
-          openSnackbar("Link deleted", SUCCESS);
-          history.push("/");
-        })
-        .catch(error => {
-          openSnackbar(error.toString(), ERROR);
-        });
-    }
+    deleteItem(itemId, itemType)
+      .then(() => {
+        openSnackbar(`${getFilterTypeSingular(true)} deleted`, SUCCESS);
+        setRefreshNeeded(true);
+        history.push("/");
+      })
+      .catch(error => {
+        openSnackbar(error.toString(), ERROR);
+      });
   };
 
   return (
     <div className={classes.root}>
       <div
         className={classes.question}
-      >{`Are you sure you want to delete current ${reprItemType()}?`}</div>
+      >{`Are you sure you want to delete current ${getFilterTypeSingular()}?`}</div>
 
       <div className={classes.actions}>
         <Button
@@ -98,5 +81,5 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
   mapStateToProps,
-  { deleteNote, deleteLink, openSnackbar }
+  { deleteItem, openSnackbar, setRefreshNeeded }
 )(ItemDelete);

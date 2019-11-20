@@ -4,16 +4,17 @@ import "easymde/dist/easymde.min.css";
 
 import history from "../history";
 import ItemForm from "./ItemForm";
-import { createNote, openSnackbar } from "../actions";
+import { createItem, openSnackbar, setRefreshNeeded } from "../actions";
 import { NOTES, SUCCESS } from "../constants";
 
-function NoteCreate({ user, createNote, openSnackbar }) {
+function NoteCreate({ loggedIn, createItem, openSnackbar, setRefreshNeeded }) {
   const handleSave = formValues => {
-    return createNote(formValues);
+    return createItem(formValues, NOTES);
   };
 
   const handleSaveSuccess = response => {
     openSnackbar("Note created", SUCCESS);
+    setRefreshNeeded(true);
     history.replace(`/notes/${response.data.id}`);
   };
 
@@ -22,7 +23,7 @@ function NoteCreate({ user, createNote, openSnackbar }) {
   };
 
   const renderNoteForm = () => {
-    if (user.loggedIn) {
+    if (loggedIn) {
       return (
         <ItemForm
           onSubmit={handleSave}
@@ -41,11 +42,11 @@ function NoteCreate({ user, createNote, openSnackbar }) {
 
 const mapStateToProps = state => {
   return {
-    user: state.auth.user
+    loggedIn: state.auth.user.loggedIn
   };
 };
 
 export default connect(
   mapStateToProps,
-  { createNote, openSnackbar }
+  { createItem, openSnackbar, setRefreshNeeded }
 )(NoteCreate);

@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Button, withStyles } from "@material-ui/core";
 import { Field, reduxForm, SubmissionError } from "redux-form";
-import { login, openSnackbar } from "../actions";
+import { login, openSnackbar, setRefreshNeeded } from "../actions";
 import { renderTextField } from "../utils/formUtils";
 import { ERROR, PASSWORD_RESET } from "../constants";
 import history from "../history";
@@ -50,7 +50,8 @@ class LoginForm extends React.Component {
   };
 
   onFormSuccess = () => {
-    history.push("/", { refresh: true });
+    this.props.setRefreshNeeded(true);
+    history.push("/");
   };
 
   render() {
@@ -122,6 +123,6 @@ const formWrapped = reduxForm({
 export default withStyles(styles)(
   connect(
     null,
-    { login, openSnackbar }
+    { login, openSnackbar, setRefreshNeeded }
   )(formWrapped)
 );

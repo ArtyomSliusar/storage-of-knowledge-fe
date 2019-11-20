@@ -6,6 +6,8 @@ import snackbarReducer from "./snackbarReducer";
 import itemReducer from "./itemReducer";
 import itemsReducer from "./itemsReducer";
 import itemsMetaReducer from "./itemsMetaReducer";
+import subjectsReducer from "./subjectsReducer";
+import usersReducer from "./usersReducer";
 
 export const reducers = combineReducers({
   auth: authReducer,
@@ -14,5 +16,7 @@ export const reducers = combineReducers({
   items: itemsReducer,
   openedItem: itemReducer,
   itemsMeta: itemsMetaReducer,
-  snackbar: snackbarReducer
+  snackbar: snackbarReducer,
+  subjects: subjectsReducer,
+  users: usersReducer
 });

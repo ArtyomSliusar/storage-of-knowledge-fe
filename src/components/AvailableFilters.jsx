@@ -7,9 +7,8 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
-import { getSubjects } from "../utils/apiUtils";
-import { applyFilters, openSnackbar } from "../actions";
-import { ERROR, LINKS, NOTES } from "../constants";
+import { applyFilters, getSubjects } from "../actions";
+import { LINKS, NOTES } from "../constants";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,7 +41,6 @@ const itemTypes = [NOTES, LINKS];
 
 function AvailableFilters(props) {
   const classes = useStyles();
-  const [subjects, setSubjects] = React.useState([]);
   const [selectedSubjects, setSelectedSubjects] = React.useState([
     ...props.selectedSubjects
   ]);
@@ -78,14 +76,7 @@ function AvailableFilters(props) {
   };
 
   useEffect(() => {
-    getSubjects()
-      .then(response => {
-        let subjectsNames = response.data.map(subject => subject.name);
-        setSubjects(subjectsNames);
-      })
-      .catch(error => {
-        props.openSnackbar(error.toString(), ERROR);
-      });
+    props.getSubjects();
   }, []);
 
   return (
@@ -94,14 +85,14 @@ function AvailableFilters(props) {
         <h5>Subjects</h5>
       </div>
       <div className={classes.chips}>
-        {subjects.map(subject => (
+        {props.subjects.allIds.map(subjectId => (
           <Chip
-            label={subject}
-            key={subject}
+            label={props.subjects.byId[subjectId].name}
+            key={subjectId}
             color="primary"
-            variant={IsSubjectEnabled(subject) ? "default" : "outlined"}
+            variant={IsSubjectEnabled(subjectId) ? "default" : "outlined"}
             className={classes.chip}
-            onClick={() => toggleSubject(subject)}
+            onClick={() => toggleSubject(subjectId)}
           />
         ))}
       </div>
@@ -149,14 +140,16 @@ function AvailableFilters(props) {
   );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     selectedSubjects: state.filters.subjects,
-    selectedType: state.filters.type
+    selectedType: state.filters.type,
+    subjects: state.subjects,
+    ...ownProps
   };
 };
 
 export default connect(
   mapStateToProps,
-  { applyFilters, openSnackbar }
+  { applyFilters, getSubjects }
 )(AvailableFilters);

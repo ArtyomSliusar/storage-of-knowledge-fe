@@ -12,9 +12,8 @@ import {
   renderSwitchField,
   renderTextField
 } from "../utils/formUtils";
-import { getSubjects } from "../utils/apiUtils";
 import { ERROR, LINKS, NOTES } from "../constants";
-import { openSnackbar } from "../actions";
+import { getSubjects, openSnackbar } from "../actions";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -62,8 +61,10 @@ const getMainFieldName = itemType => {
 function ItemForm({
   handleSubmit,
   error,
+  subjects,
   onSubmit,
   onClose,
+  getSubjects,
   onFormSuccess,
   openSnackbar,
   initialValues
@@ -73,14 +74,14 @@ function ItemForm({
   const itemType = initialValues.itemType;
 
   useEffect(() => {
-    getSubjects()
-      .then(response => {
-        let subjectsNames = response.data.map(subject => subject.name);
-        setAvailableSubjects(subjectsNames);
-      })
-      .catch(error => {
-        openSnackbar(error.toString(), ERROR);
-      });
+    setAvailableSubjects(subjects.allIds);
+  }, [subjects]);
+
+  useEffect(() => {
+    getSubjects();
+    initialValues.subjects = initialValues.subjects.map(
+      subjectId => subjects.byId[subjectId].name
+    );
   }, []);
 
   const submit = formValues => {
@@ -166,11 +167,14 @@ function ItemForm({
           component={renderSelectField}
           label="Subjects"
         >
-          {availableSubjects.map(name => (
-            <MenuItem key={name} value={name}>
-              {name}
-            </MenuItem>
-          ))}
+          {availableSubjects.map(subjectId => {
+            const subjectName = subjects.byId[subjectId].name;
+            return (
+              <MenuItem key={subjectId} value={subjectName}>
+                {subjectName}
+              </MenuItem>
+            );
+          })}
         </Field>
       </div>
 
@@ -223,11 +227,12 @@ const formWrapped = reduxForm({
 
 const mapStateToProps = (state, ownProps) => {
   return {
+    subjects: state.subjects,
     ...ownProps
   };
 };
 
 export default connect(
   mapStateToProps,
-  { openSnackbar }
+  { openSnackbar, getSubjects }
 )(formWrapped);

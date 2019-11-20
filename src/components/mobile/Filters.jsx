@@ -1,12 +1,22 @@
 import React from "react";
 import AvailableFilters from "../AvailableFilters";
 import history from "../../history";
+import { connect } from "react-redux";
+import { setRefreshNeeded } from "../../actions";
 
-export default function Filters() {
+function Filters({ setRefreshNeeded }) {
   return (
     <AvailableFilters
       onCancel={history.goBack}
-      onApplyCallback={() => history.push("/", { refresh: true })}
+      onApplyCallback={() => {
+        setRefreshNeeded(true);
+        history.push("/");
+      }}
     />
   );
 }
+
+export default connect(
+  null,
+  { setRefreshNeeded }
+)(Filters);

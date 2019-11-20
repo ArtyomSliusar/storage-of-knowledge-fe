@@ -1,4 +1,4 @@
-import { LOGIN, LOGOUT, GET_USER, REFRESH_TOKENS } from "../constants";
+import { GET_USER, LOGIN, LOGOUT, REFRESH_TOKENS } from "../constants";
 import { getTokenPayload } from "../utils/otherUtils";
 
 export default (state = {}, action) => {
@@ -13,7 +13,6 @@ export default (state = {}, action) => {
           refresh: action.payload.data.refresh
         },
         user: {
-          ...state.user,
           id: tokenPayload["user_id"],
           loggedIn: true
         }
@@ -23,8 +22,7 @@ export default (state = {}, action) => {
         ...state,
         user: {
           ...state.user,
-          username: action.payload.data.username,
-          email: action.payload.data.email
+          ...action.payload.userMeta
         }
       };
     case LOGOUT:

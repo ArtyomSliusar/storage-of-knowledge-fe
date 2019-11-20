@@ -66,7 +66,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function ItemShow({ getItem, itemId, itemType, itemDetails, user }) {
+function ItemShow({
+  getItem,
+  itemId,
+  itemType,
+  itemDetails,
+  currentUser,
+  users,
+  subjects
+}) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -106,7 +114,7 @@ function ItemShow({ getItem, itemId, itemType, itemDetails, user }) {
   };
 
   const renderActions = () => {
-    if (user.loggedIn && user.username === itemDetails.username) {
+    if (currentUser.loggedIn && currentUser.id === itemDetails.author) {
       return (
         <div className={classes.actions}>
           <Button
@@ -187,7 +195,7 @@ function ItemShow({ getItem, itemId, itemType, itemDetails, user }) {
                       <Grid item xs container direction="column" spacing={2}>
                         <Grid item xs>
                           <Typography variant="subtitle1">
-                            {itemDetails.username}
+                            {users.byId[itemDetails.author].username}
                           </Typography>
                           <Typography variant="body2" color="textSecondary">
                             {itemDetails.date_modified}
@@ -199,12 +207,12 @@ function ItemShow({ getItem, itemId, itemType, itemDetails, user }) {
                   </Grid>
 
                   <div>
-                    {itemDetails.subjects.map(subject => (
+                    {itemDetails.subjects.map(subjectId => (
                       <Chip
                         className={classes.chip}
                         color="primary"
-                        label={subject}
-                        key={subject}
+                        label={subjects.byId[subjectId].name}
+                        key={subjectId}
                       />
                     ))}
                   </div>
@@ -245,7 +253,9 @@ function ItemShow({ getItem, itemId, itemType, itemDetails, user }) {
 const mapStateToProps = (state, ownProps) => {
   return {
     itemDetails: state.openedItem.details,
-    user: state.auth.user,
+    currentUser: state.auth.user,
+    users: state.users,
+    subjects: state.subjects,
     ...ownProps
   };
 };
