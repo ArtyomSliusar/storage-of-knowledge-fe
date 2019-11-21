@@ -22,8 +22,6 @@ export default (state = {}, action) => {
         ...state,
         comments: action.payload.data
       };
-    case DELETE_ITEM:
-      return {};
     case GET_ITEM_LIKE:
       if (action.payload.data.length > 0) {
         return {
@@ -43,6 +41,8 @@ export default (state = {}, action) => {
         ...state,
         comments: null // refresh tree structure needed
       };
+    case DELETE_ITEM:
+      return {};
     case DELETE_ITEM_LIKE:
       return _.omit(state, "like");
     case DELETE_ITEM_COMMENT:

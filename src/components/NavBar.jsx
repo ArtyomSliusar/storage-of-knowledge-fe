@@ -11,8 +11,8 @@ function NavBar({ userId, getUser, loggedIn }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
   const userMenuItems = {
-    Profile: "/",
-    "My storage": "/",
+    Profile: "/profile",
+    "My storage": "/my-storage",
     "Log out": "/logout"
   };
 

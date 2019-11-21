@@ -45,96 +45,96 @@ export const defaultState = {
 };
 
 // TODO: use this state structure
-export const flatDefaultState = {
-  subjects: {
-    byId: {
-      "1": {
-        id: "1",
-        name: "Python"
-      }
-    },
-    allIds: ["1", "2"]
-  },
-  types: {
-    byId: {
-      "1": "notes",
-      "2": "links"
-    }
-  },
-  users: {
-    byId: {
-      "1": {
-        username: "artem"
-      }
-    }
-  },
-  items: {
-    byId: {
-      "1": {
-        id: "1",
-        title: "",
-        subjects: ["1"],
-        user: "1",
-        private: false,
-        likes_count: 1,
-        date_modified: ""
-      }
-    },
-    allIds: ["1", "2"]
-  },
-  auth: {
-    tokens: {},
-    user: {
-      id: "1",
-      email: "",
-      loggedIn: true
-    }
-  },
-  filters: {
-    subjects: ["1"],
-    type: "1"
-  },
-  comments: {
-    byId: {
-      id: "1",
-      parent: null,
-      user: "1",
-      note: "1",
-      body: "",
-      reply_set: ["2", "3"],
-      date_created: "",
-      date_modified: ""
-    },
-    allIds: ["1", "2"]
-  },
-  openedItem: {
-    id: "1",
-    title: "",
-    body: "",
-    subjects: ["1"],
-    user: "1",
-    private: true,
-    date_created: "",
-    date_modified: ""
-  },
-  snackbar: {
-    open: false,
-    message: "",
-    type: INFO
-  },
-  itemsMeta: {
-    initialized: false,
-    count: 1,
-    next: "",
-    previous: "",
-    display: {
-      orderBy: "title",
-      order: "asc",
-      limit: 15,
-      page: 0
-    }
-  }
-};
+// export const flatDefaultState = {
+//   subjects: {
+//     byId: {
+//       "1": {
+//         id: "1",
+//         name: "Python"
+//       }
+//     },
+//     allIds: ["1", "2"]
+//   },
+//   types: {
+//     byId: {
+//       "1": "notes",
+//       "2": "links"
+//     }
+//   },
+//   users: {
+//     byId: {
+//       "1": {
+//         username: "artem"
+//       }
+//     }
+//   },
+//   items: {
+//     byId: {
+//       "1": {
+//         id: "1",
+//         title: "",
+//         subjects: ["1"],
+//         user: "1",
+//         private: false,
+//         likes_count: 1,
+//         date_modified: ""
+//       }
+//     },
+//     allIds: ["1", "2"]
+//   },
+//   auth: {
+//     tokens: {},
+//     user: {
+//       id: "1",
+//       email: "",
+//       loggedIn: true
+//     }
+//   },
+//   filters: {
+//     subjects: ["1"],
+//     type: "1"
+//   },
+//   comments: {
+//     byId: {
+//       id: "1",
+//       parent: null,
+//       user: "1",
+//       note: "1",
+//       body: "",
+//       reply_set: ["2", "3"],
+//       date_created: "",
+//       date_modified: ""
+//     },
+//     allIds: ["1", "2"]
+//   },
+//   openedItem: {
+//     id: "1",
+//     title: "",
+//     body: "",
+//     subjects: ["1"],
+//     user: "1",
+//     private: true,
+//     date_created: "",
+//     date_modified: ""
+//   },
+//   snackbar: {
+//     open: false,
+//     message: "",
+//     type: INFO
+//   },
+//   itemsMeta: {
+//     initialized: false,
+//     count: 1,
+//     next: "",
+//     previous: "",
+//     display: {
+//       orderBy: "title",
+//       order: "asc",
+//       limit: 15,
+//       page: 0
+//     }
+//   }
+// };
 
 const store = createStore(
   reducers,

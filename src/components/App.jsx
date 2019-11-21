@@ -22,6 +22,8 @@ import LinkCreate from "./LinkCreate";
 import ActivateUserForm from "./ActivateUserForm";
 import SendConfirmationForm from "./SendConfirmationForm";
 import ResetPasswordForm from "./ResetPasswordForm";
+import UserProfile from "./UserProfile";
+import UserStorage from "./UserStorage";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -73,6 +75,8 @@ export default function App() {
               path="/users/new"
               render={props => <LoginRegister {...props} tab={1} />}
             />
+            <Route exact path="/profile" component={UserProfile} />
+            <Route exact path="/my-storage" component={UserStorage} />
             <Route exact path="/activate-user" component={ActivateUserForm} />
             <Route
               exact
