@@ -34,7 +34,7 @@ export function requestMiddleware() {
 
     if (tokens.refresh && Date.now() / 1000 > accessToken["exp"]) {
       if (refreshInProgress === true) {
-        // FIXME: potential bug may be here, when caller expects promise to be
+        // TODO: potential bug may be here, when caller expects promise to be
         // returned, but we return undefined instead
         callbackQueue.push(action);
       } else {

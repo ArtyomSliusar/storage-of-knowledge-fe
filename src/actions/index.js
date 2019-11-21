@@ -32,8 +32,6 @@ import axios from "axios";
 import { item, subject, user } from "../shemas";
 import { getRequestHeaders } from "../utils/otherUtils";
 
-// TODO: DRY
-
 export const login = (username, password) => async dispatch => {
   const response = await backend.post(
     "/token/",

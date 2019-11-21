@@ -161,7 +161,9 @@ function ItemShow({
         <SimpleMDE
           getMdeInstance={getIntance}
           value={itemDetails.body}
-          options={{ toolbar: false }}
+          options={{
+            toolbar: false
+          }}
           className={classes.simpleMde}
         />
       );
