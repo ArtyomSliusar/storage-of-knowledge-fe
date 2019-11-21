@@ -32,21 +32,43 @@ const useStyles = makeStyles(theme => ({
   controlPanel: {
     display: "flex",
     flexFlow: "row wrap",
-    height: "20%",
     width: "100%",
     justifyContent: "center",
-    [theme.breakpoints.up("sm")]: {
-      height: "8%"
+    [theme.breakpoints.down("xs")]: {
+      height: "20%"
+    },
+    [theme.breakpoints.between("sm", "md")]: {
+      height: "15%"
+    },
+    [theme.breakpoints.up("md")]: {
+      height: "10%"
+    }
+  },
+  results: {
+    flex: "1 0 auto",
+    width: "100%",
+    [theme.breakpoints.down("xs")]: {
+      height: "80%"
+    },
+    [theme.breakpoints.between("sm", "md")]: {
+      height: "85%"
+    },
+    [theme.breakpoints.up("md")]: {
+      height: "90%"
     }
   },
   search: {
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.down("xs")]: {
+      flex: "1 0 100%"
+    },
+    [theme.breakpoints.between("sm", "md")]: {
+      marginRight: theme.spacing(3),
+      marginLeft: "auto"
+    },
+    [theme.breakpoints.up("md")]: {
       marginRight: theme.spacing(3),
       marginLeft: "auto",
       width: 400
-    },
-    [theme.breakpoints.down("xs")]: {
-      flex: "1 0 100%"
     }
   },
   filter: {
@@ -59,14 +81,6 @@ const useStyles = makeStyles(theme => ({
     zIndex: 1,
     bottom: theme.spacing(2),
     right: theme.spacing(2)
-  },
-  results: {
-    flex: "1 0 auto",
-    width: "100%",
-    height: "80%",
-    [theme.breakpoints.up("sm")]: {
-      height: "92%"
-    }
   }
 }));
 
