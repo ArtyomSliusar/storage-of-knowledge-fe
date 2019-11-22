@@ -3,9 +3,8 @@ export const NOTES = "notes";
 export const LINKS = "links";
 
 // API
-export const API_VERSION = "v1";
-export const BASE_URL = `http://127.0.0.1:8000/api/${API_VERSION}`;
-export const RECAPTCHA_PUBLIC_KEY = "6LfOQcIUAAAAAGHJpQsjDOLVRtiS1HKsU2Wvmm3K";
+export const BASE_URL = window._env_.BASE_URL;
+export const RECAPTCHA_PUBLIC_KEY = window._env_.RECAPTCHA_PUBLIC_KEY;
 
 // Confirmation types
 export const ACTIVATION = "activation";
