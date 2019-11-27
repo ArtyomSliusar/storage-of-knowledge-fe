@@ -12,7 +12,7 @@ import { combineReducers } from "redux";
 function itemsById(state = {}, action) {
   switch (action.type) {
     case GET_ITEMS:
-      return action.payload.byId;
+      return action.payload.byId || {};
     case GET_MORE_ITEMS:
       return {
         ...state,
