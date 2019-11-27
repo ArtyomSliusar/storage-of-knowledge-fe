@@ -1,8 +1,8 @@
-# docker build -f Dockerfile ./ -t storage-of-knowledge-fe:01
-# docker run -ti --rm storage-of-knowledge-fe:01 bash
+# docker build -f Dockerfile ./ -t artyomsliusar/storage-of-knowledge-fe:01
+# docker run -ti --rm artyomsliusar/storage-of-knowledge-fe:01 bash
 # docker run --rm --network="host" \
 #	-v $(pwd)/.env:/usr/share/nginx/html/.env \
-# 	storage-of-knowledge-fe:01
+# 	artyomsliusar/storage-of-knowledge-fe:01
 
 FROM node:alpine as builder
 WORKDIR /app
