@@ -71,10 +71,19 @@ const getFilterTypeSingular = (startWithCapital = false) => {
   return startWithCapital ? name.charAt(0).toUpperCase() + name.slice(1) : name;
 };
 
+const convertUrlProtocol = url => {
+  let currentProtocol = window.location.href.split("/")[0];
+  if (url) {
+    return url.replace(/(^\w+:|^)/, currentProtocol);
+  }
+  return url;
+};
+
 export {
   setLocalStorageState,
   getInitialState,
   getTokenPayload,
   getFilterTypeSingular,
-  getRequestHeaders
+  getRequestHeaders,
+  convertUrlProtocol
 };

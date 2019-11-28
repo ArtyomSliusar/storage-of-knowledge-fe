@@ -29,7 +29,7 @@ import {
 } from "../constants";
 import axios from "axios";
 import { item, subject, user } from "../shemas";
-import { getRequestHeaders } from "../utils/otherUtils";
+import { convertUrlProtocol, getRequestHeaders } from "../utils/otherUtils";
 
 export const login = (username, password) => async dispatch => {
   const response = await backend.post(
@@ -189,7 +189,10 @@ export const getItems = (search, type) => async (dispatch, getState) => {
   );
 
   const resultsData = normalize(response.data.results, [item]);
-  const { count, next, previous } = response.data;
+  const { count } = response.data;
+
+  const next = convertUrlProtocol(response.data.next);
+  const previous = convertUrlProtocol(response.data.previous);
 
   dispatch({
     type: GET_ITEMS,
@@ -210,7 +213,10 @@ export const getMoreItems = url => async dispatch => {
     });
 
     const resultsData = normalize(response.data.results, [item]);
-    const { count, next, previous } = response.data;
+    const { count } = response.data;
+
+    const next = convertUrlProtocol(response.data.next);
+    const previous = convertUrlProtocol(response.data.previous);
 
     dispatch({
       type: GET_MORE_ITEMS,
