@@ -27,7 +27,6 @@ import {
   SET_REFRESH_NEEDED,
   GET_ITEM_LIKE
 } from "../constants";
-import history from "../history";
 import axios from "axios";
 import { item, subject, user } from "../shemas";
 import { getRequestHeaders } from "../utils/otherUtils";
@@ -68,8 +67,6 @@ export const logout = () => async (dispatch, getState) => {
   dispatch({
     type: LOGOUT
   });
-
-  history.push("/");
 };
 
 export const register = (
@@ -132,11 +129,12 @@ export const initializeItems = () => {
   };
 };
 
-export const setRefreshNeeded = value => {
-  return {
+export const setRefreshNeeded = value => async dispatch => {
+  dispatch({
     type: SET_REFRESH_NEEDED,
     payload: { value: value }
-  };
+  });
+  return Promise.resolve();
 };
 
 export const changeItemsDisplay = params => {

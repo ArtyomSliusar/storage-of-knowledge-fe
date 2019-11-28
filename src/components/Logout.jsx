@@ -1,10 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
-import { logout } from "../actions";
+import { logout, setRefreshNeeded } from "../actions";
+import history from "../history";
 
 class Logout extends React.Component {
   componentDidMount() {
-    this.props.logout();
+    this.props.logout().then(() => {
+      this.props.setRefreshNeeded(true);
+      history.replace("/");
+    });
   }
 
   render() {
@@ -14,5 +18,5 @@ class Logout extends React.Component {
 
 export default connect(
   null,
-  { logout }
+  { logout, setRefreshNeeded }
 )(Logout);
