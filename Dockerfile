@@ -1,7 +1,7 @@
 FROM node:alpine as builder
 WORKDIR /app
 COPY . .
-RUN npm run build
+RUN npm install && npm run build
 
 # => Run container
 FROM nginx:1.15.2-alpine
