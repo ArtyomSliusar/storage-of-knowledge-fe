@@ -1,106 +1,67 @@
-import Paper from "@material-ui/core/Paper";
-import { Button, FormControl, Input, InputLabel } from "@material-ui/core";
 import React from "react";
-import PropTypes from "prop-types";
-import { makeStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
+import TabPanel from "./TabPanel";
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
+import history from "../history";
 
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired
-};
-
-const useStyles = makeStyles(theme => ({
+const styles = theme => ({
   root: {
-    flexGrow: 1
-  },
-  form: {
-    display: "inline-block"
+    maxWidth: 600,
+    margin: "auto"
   }
-}));
+});
 
-function LoginRegister() {
-  const classes = useStyles();
-  const [value, setValue] = React.useState(0);
-
-  function handleChange(event, newValue) {
-    setValue(newValue);
+class LoginRegister extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tab: props.tab !== undefined ? props.tab : 0
+    };
   }
 
-  return (
-    <Paper className={classes.root}>
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        indicatorColor="primary"
-        textColor="primary"
-        centered
-      >
-        <Tab label="Log in" />
-        <Tab label="Register" />
-      </Tabs>
+  handleTabChange = (event, newTab) => {
+    this.setState({ tab: newTab });
+  };
 
-      <TabPanel value={value} index={0}>
-        <form className={classes.root}>
-          <FormControl margin="normal" fullWidth>
-            <InputLabel htmlFor="username">Username</InputLabel>
-            <Input id="username" type="text" />
-          </FormControl>
+  render() {
+    const { classes } = this.props;
+    return (
+      <div className={classes.root}>
+        <Tabs
+          value={this.state.tab}
+          onChange={this.handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+          centered
+        >
+          <Tab
+            label="Log in"
+            onClick={() => {
+              history.replace("/login");
+            }}
+          />
+          <Tab
+            label="Register"
+            onClick={() => {
+              history.replace("/users/new");
+            }}
+          />
+        </Tabs>
 
-          <FormControl margin="normal" fullWidth>
-            <InputLabel htmlFor="password">Password</InputLabel>
-            <Input id="password" type="password" />
-          </FormControl>
+        <TabPanel value={this.state.tab} index={0}>
+          <LoginForm onClose={() => history.goBack()} />
+        </TabPanel>
 
-          <Button variant="contained" color="primary" size="medium">
-            Log in
-          </Button>
-        </form>
-      </TabPanel>
-
-      <TabPanel value={value} index={1}>
-        <form className={classes.root}>
-          <FormControl margin="normal" fullWidth>
-            <InputLabel htmlFor="username">Username</InputLabel>
-            <Input id="username" type="text" />
-          </FormControl>
-
-          <FormControl margin="normal" fullWidth>
-            <InputLabel htmlFor="email">Email</InputLabel>
-            <Input id="email" type="email" />
-          </FormControl>
-
-          <FormControl margin="normal" fullWidth>
-            <InputLabel htmlFor="password">Password</InputLabel>
-            <Input id="password" type="password" />
-          </FormControl>
-
-          <Button variant="contained" color="primary" size="medium">
-            Sign up
-          </Button>
-        </form>
-      </TabPanel>
-    </Paper>
-  );
+        <TabPanel value={this.state.tab} index={1}>
+          <RegisterForm onClose={() => history.goBack()} />
+        </TabPanel>
+      </div>
+    );
+  }
 }
 
-export default LoginRegister;
+export default withStyles(styles)(LoginRegister);
